@@ -14,6 +14,7 @@
 ```text
 AGENTS.md                  # 本框架仓库自身的维护规则
 COMMON_ERRORS.md           # 通用问题记录模板
+SUBAGENTS.md               # 子 Agent 模板索引
 docs/                      # 架构和发布安全说明
 templates/AGENTS.md        # 新工作区根规则模板
 templates/agent_rules/     # 按需读取规则模板
