@@ -1,0 +1,18 @@
+# Copy this file to a private path before use.
+# Do not commit real IDs, tokens, secrets, webhook URLs, or session keys.
+
+[workspace]
+root = "<WORKSPACE_ROOT>"
+private_data_dir = "<PRIVATE_DATA_DIR>"
+log_dir = "<LOG_DIR>"
+temp_dir = "<TEMP_DIR>"
+
+[connector]
+name = "<CONNECTOR_NAME>"
+mode = "dry-run"
+api_base_url = "<API_BASE_URL>"
+
+[auth]
+client_id = "<CLIENT_ID>"
+client_secret_env = "<CLIENT_SECRET_ENV_NAME>"
+token_env = "<TOKEN_ENV_NAME>"

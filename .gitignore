@@ -1,0 +1,64 @@
+# Default deny: every path is ignored unless explicitly allowed below.
+*
+
+# Repository metadata and framework docs.
+!.gitignore
+!README.md
+!AGENTS.md
+!COMMON_ERRORS.md
+
+# Reusable framework documentation.
+!docs/
+!docs/**
+
+# Safe templates and skeletons.
+!templates/
+!templates/**
+
+# Top-level local script directory is intentionally not versioned.
+# Only this note is tracked; reusable script skeletons live in templates/scripts.
+!/scripts/
+/scripts/**
+!/scripts/README.md
+
+# Local runtime, connector state, logs, generated files, and private data.
+/.env
+/.env.*
+/.cc-connect*/
+/.runtime/
+/runtime/
+/agents/
+/data/
+/org_data/
+/workspace_data/
+/private/
+/secrets/
+/log/
+/logs/
+/temp/
+/tmp/
+/downloads/
+/minutes/
+/plan/
+/tools/
+*.log
+*.err.log
+*.tmp
+*.webp
+*.png
+*.jpg
+*.jpeg
+*.mp4
+*.mov
+*.zip
+*.7z
+*.rar
+__pycache__/
+*.pyc
+
+# Local/editor noise.
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

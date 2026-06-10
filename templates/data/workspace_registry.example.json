@@ -1,0 +1,10 @@
+{
+  "workspaces": [
+    {
+      "workspace_id": "<WORKSPACE_ID>",
+      "display_name": "<WORKSPACE_NAME>",
+      "context_path": "<PRIVATE_CONTEXT_PATH>",
+      "status": "active"
+    }
+  ]
+}
