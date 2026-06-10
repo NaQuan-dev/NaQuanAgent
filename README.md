@@ -18,6 +18,7 @@ docs/                      # 架构和发布安全说明
 templates/AGENTS.md        # 新工作区根规则模板
 templates/agent_rules/     # 按需读取规则模板
 templates/subagent/        # 子 Agent 模板
+templates/subagents/       # 具体场景子 Agent 模板
 templates/scripts/         # 脚本骨架，只做 dry-run 或占位
 scripts/README.md          # 真实本地脚本不进仓库的说明
 ```
@@ -35,8 +36,9 @@ scripts/README.md          # 真实本地脚本不进仓库的说明
 1. 复制 `templates/AGENTS.md` 到你的真实工作区根目录。
 2. 按需要复制 `templates/agent_rules/` 到真实工作区的私有规则目录。
 3. 为每个项目或子 Agent 复制 `templates/subagent/`。
-4. 将真实数据目录、运行目录、日志目录和密钥配置加入本地 `.gitignore`。
-5. 根据 `docs/publish_safety.md` 做提交前检查。
+4. 需要新媒体内容运营场景时，可复制 `templates/subagents/new_media/`。
+5. 将真实数据目录、运行目录、日志目录和密钥配置加入本地 `.gitignore`。
+6. 根据 `docs/publish_safety.md` 做提交前检查。
 
 ## 安全原则
 

@@ -1,0 +1,2 @@
+path,type,source,owner,status,notes
+<RELATIVE_PATH>,<asset|draft|reference|output>,<SOURCE>,<OWNER>,<STATUS>,<NOTES>
