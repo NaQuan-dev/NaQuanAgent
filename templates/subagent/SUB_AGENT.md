@@ -1,5 +1,7 @@
 # SUB_AGENT.md
 
+> TEMPLATE ONLY: If this file is still located under a `templates/` directory, it is not an active sub-agent rule file. Copy it into a private sub-agent workspace, replace placeholders, and then use the copied file.
+
 This file is the resident rule file for the `<GROUP_NAME>` sub-agent. Keep it small. Detailed context and operational details should live in nearby files.
 
 ## Scope

@@ -170,6 +170,33 @@ Verification:
 - Default searches should not be treated as proof that runtime files are missing.
 - An ignored-file search against the explicit private directory can find live `SUB_AGENT.md` and rule files.
 
+## Generic Issue: Template Skeleton Is Mistaken For Live Runtime Rules
+
+Scenario:
+- A model or automation is looking for active `AGENTS.md`, `SUB_AGENT.md`, `group_context.md`, or `agent_rules/*.md` files.
+- The repository also contains redacted skeletons under `templates/`.
+
+Typical symptoms/errors:
+- The model follows placeholder rules such as `<WORKSPACE_ROOT>` or `<GROUP_NAME>`.
+- A group or employee workflow behaves like the generic template instead of the configured live workspace.
+- The model concludes that real runtime rules are missing because default search returned only `templates/`.
+
+Likely cause:
+- Default search found allowlisted GitHub templates while private runtime directories were hidden by `.gitignore`.
+- The caller did not distinguish template maintenance from runtime operation.
+- The template file name matched the live file name.
+
+Preflight strategy:
+- Treat every path containing `templates/` as non-runtime unless the task is template maintenance, framework publishing, or scaffold generation.
+- For live runtime tasks, first locate the private workspace root, then search that explicit root with ignored files included if needed.
+- Keep a local `.ignore` entry for `templates/` so default text search is less likely to return template hits.
+- Add a clear TEMPLATE ONLY banner to template `AGENTS.md` and `SUB_AGENT.md` files.
+
+Verification:
+- A search for live runtime rules should return files outside `templates/`.
+- Governance checks confirm `.ignore` hides `templates/` and root rules say template hits are not runtime context.
+- Template files use placeholders only and never contain real organization data.
+
 ## Generic Issue: Pre-Model Connector Failure Makes The Model Blind To Events
 
 Scenario:

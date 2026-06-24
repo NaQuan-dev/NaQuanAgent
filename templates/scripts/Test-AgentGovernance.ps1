@@ -83,7 +83,10 @@ if (-not (Test-Path -LiteralPath $WorkspaceRoot -PathType Container)) {
 }
 
 $rootRules = Join-WorkspacePath "AGENTS.md"
+$ignoreFile = Join-WorkspacePath ".ignore"
 $commonErrors = Join-WorkspacePath "COMMON_ERRORS.md"
+$templateRootRules = Join-WorkspacePath "templates\AGENTS.md"
+$templateSubAgentRules = Join-WorkspacePath "templates\subagent\SUB_AGENT.md"
 $rulesIndex = Join-WorkspacePath "agent_rules\index.md"
 $registry = Join-WorkspacePath "agent_rules\rule_registry.example.json"
 $preflight = Join-WorkspacePath "agent_rules\common_error_preflight.md"
@@ -98,6 +101,10 @@ Read-JsonFile -Path $registry -Area "rule registry" | Out-Null
 Read-JsonFile -Path $profile -Area "agent profile" | Out-Null
 
 Assert-FileContains -Path $rootRules -Needle "COMMON_ERRORS.md" -Area "common error preflight" -Message "Root rules reference COMMON_ERRORS.md"
+Assert-FileContains -Path $rootRules -Needle "template hit only" -Area "template boundary" -Message "Root rules prevent template hits from being treated as runtime context"
+Assert-FileContains -Path $ignoreFile -Needle "templates/" -Area "template boundary" -Message ".ignore hides templates from default local search" -LevelOnMissing "WARNING"
+Assert-FileContains -Path $templateRootRules -Needle "TEMPLATE ONLY" -Area "template boundary" -Message "Template AGENTS.md has a template-only banner" -LevelOnMissing "WARNING"
+Assert-FileContains -Path $templateSubAgentRules -Needle "TEMPLATE ONLY" -Area "template boundary" -Message "Template SUB_AGENT.md has a template-only banner" -LevelOnMissing "WARNING"
 Assert-FileContains -Path $preflight -Needle "common_errors_update_pending.md" -Area "common error preflight" -Message "Preflight rule references update candidates"
 Assert-FileContains -Path $hookGuardrails -Needle "pre-model" -Area "hook guardrails" -Message "Hook guardrails cover pre-model connector failures"
 Assert-FileContains -Path $contextBudget -Needle "SUB_AGENT.md" -Area "context budget" -Message "Context budget covers SUB_AGENT.md"

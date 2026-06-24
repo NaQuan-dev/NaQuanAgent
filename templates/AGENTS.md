@@ -1,5 +1,7 @@
 # AGENTS.md
 
+> TEMPLATE ONLY: If this file is still located under a `templates/` directory, it is not an active runtime rule file. Do not use it as live Agent instructions. Copy it to the root of a private workspace, replace all placeholders, and then use the copied file as that workspace's `AGENTS.md`.
+
 This file is the resident Agent rule file for `<WORKSPACE_NAME>`. Keep it small. Detailed procedures should be loaded on demand from `<RULES_DIR>`.
 
 ## Core Principles

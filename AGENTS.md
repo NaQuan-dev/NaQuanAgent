@@ -31,6 +31,8 @@ Do not commit:
 ## Template Boundary
 
 - `templates/` stores redacted skeletons that are safe for GitHub; it is not the source of truth for a live Agent or sub-agent.
+- Any file under a path containing `templates/` is a template, not an active runtime rule, even if its filename is `AGENTS.md`, `SUB_AGENT.md`, `group_context.md`, or an `agent_rules/*.md` file.
+- If a search result points into `templates/` while looking for live rules, stop and locate the adopter's private workspace instead of using the template result.
 - Live rules should live in the adopter's private local workspace.
 - Do not sync live `AGENTS.md`, `SUB_AGENT.md`, or private rules into `templates/` unless the user explicitly asks to publish redacted templates.
 - When publishing to GitHub, first redact live rules into placeholder templates, then run a sensitive-data scan.
@@ -41,6 +43,7 @@ Do not commit:
 - When looking for live rules, employee records, group sub-agents, or private workspace content, do not rely only on default `rg --files` or default full-text search.
 - First list the intended private directory, then search that explicit directory with ignored files included.
 - If a default search hits `templates/`, treat it as a template hit only. Do not use template content as live runtime context unless the task is template maintenance or GitHub publishing.
+- Use `.ignore` to hide `templates/` from default local searches where possible; this reduces accidental template hits but does not replace the rule above.
 
 ## Edit Rules
 
