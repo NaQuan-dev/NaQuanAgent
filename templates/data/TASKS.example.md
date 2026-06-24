@@ -1,7 +1,7 @@
 # TASKS.example
 
-本文件是任务记录模板。真实任务、客户、人员和业务内容必须保存在私有工作区。
+This is a task registry template. Real tasks, customers, people, and business details must stay in a private workspace and must not be committed to the framework repository.
 
-| task_id | requester_id | assignee_id | status | title | due_at | notes |
+| task_id | owner_user_id | title | status | due_date | source_ref | notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `<TASK_ID>` | `<REQUESTER_ID>` | `<ASSIGNEE_ID>` | draft | `<TITLE>` | `<DUE_AT>` | `<NOTES>` |
+| `<TASK_ID>` | `<USER_ID>` | `<TASK_TITLE>` | open | `<YYYY-MM-DD>` | `<SOURCE_REF>` | `<NOTES>` |

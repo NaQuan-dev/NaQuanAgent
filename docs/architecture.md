@@ -1,41 +1,60 @@
 # Architecture
 
-本框架采用“核心规则常驻、详细规则按需读取”的结构，目标是减少上下文占用，同时保留可审计的安全边界。
+This framework uses a "small resident rules, detailed rules on demand" structure. The goal is to reduce context load while preserving auditable safety boundaries.
 
-## 核心层
+## Core Layer
 
-- 根 `AGENTS.md` 只保存高频、低变化、必须始终遵守的规则。
-- 根规则不写真实组织信息、真实人员信息和真实系统参数。
-- 根规则通过路由表指向按需读取的规则文件。
+- The root `AGENTS.md` contains only high-frequency, low-change rules that must always be followed.
+- Root rules must not contain real organization data, people data, or private system parameters.
+- Root rules route task-specific behavior to on-demand rule files.
 
-## 规则层
+## Rule Layer
 
-`templates/agent_rules/` 提供可复制的规则模板：
+`templates/agent_rules/` provides reusable rule templates:
 
-- `identity_access.md`：用户身份、权限和资料访问。
-- `external_actions.md`：外部消息、任务、日程、邮件等触达动作。
-- `memory_context.md`：长期上下文、压缩和沉淀。
-- `workspace_io.md`：文件、日志、临时目录和编码。
-- `git_publish_safety.md`：提交和推送前的安全检查。
+- `rule_registry.md` / `rule_registry.example.json`: source of truth, read timing, write permissions, and review requirements.
+- `common_error_preflight.md`: known-error preflight and update-candidate workflow.
+- `hook_guardrails.md`: inbound routing, pre-model errors, outbound safety, artifact delivery, memory writes, and automation writeback.
+- `context_budget.md`: line budgets and compression rules for long-term context and resident rules.
+- `daily_review_core.md`: reusable daily review rules for departments or groups.
+- `request_intake.md`: handling vague employee requests without requiring prompt-writing skill.
+- `identity_access.md`: user identity, permissions, group membership, and private-query boundaries.
+- `external_actions.md`: external messages, tasks, calendar, mail, and write actions.
+- `memory_context.md`: long-term context, compression, history, and message indexes.
+- `workspace_io.md`: files, logs, temporary directories, and encoding.
+- `voice_note_minutes_retention.md`: audio/video transcript artifact retention and cleanup.
+- `git_publish_safety.md`: commit and push safety checks.
 
-## 子 Agent 层
+## Sub-Agent Layer
 
-`templates/subagent/` 用于项目、群组、部门或业务域：
+`templates/subagent/` is for projects, groups, departments, or business domains:
 
-- `SUB_AGENT.md`：子 Agent 必须常驻的最小规则。
-- `group_context.md`：长期背景、偏好、流程和分工。
-- `workspace/`：本地处理区，真实内容不应提交到框架仓库。
+- `SUB_AGENT.md`: minimal resident rules for the sub-agent.
+- `agent_profile.example.json`: machine-readable policy for automations and hooks.
+- `group_context.md`: long-term background, preferences, workflow, and responsibilities.
+- `workspace/`: local processing area; real content must not be committed to this framework repository.
 
-`templates/subagents/new_media/` 是一个更完整的场景模板，用于内容策略、选题、脚本、素材库和发布前审查等新媒体运营任务。它只包含通用占位符，不包含任何真实组织、产品、客户或账号数据。
+`templates/subagents/new_media/` is a more complete scenario template for content strategy, topic planning, scripts, asset libraries, and pre-publish review. It contains only placeholders and no real organization, product, customer, or account data.
 
-## 脚本层
+## Memory Review Layer
 
-`templates/scripts/` 只提供骨架：
+`templates/memory_review/` is for weekly memory compression, knowledge draft review, and `COMMON_ERRORS.md` update candidates:
 
-- 默认不写入真实数据。
-- 默认不触达外部系统。
-- 需要真实接入时，在私有工作区复制并补充实现。
+- Official company facts, sub-agent rules, official knowledge-base documents, and `COMMON_ERRORS.md` are not changed directly by default.
+- Automations prepare candidates and review lists; an administrator reviews and merges them.
+- Human-readable knowledge bases are for SOPs, FAQs, templates, and official documents.
+- Agent knowledge bases are for task manuals, retrieval maps, execution paths, and draft candidates.
 
-## 数据层
+## Script Layer
 
-真实数据应保存在使用者自己的私有目录中，并由 `.gitignore` 默认忽略。框架仓库只提供 example 文件和空模板。
+`templates/scripts/` contains skeletons only:
+
+- Default behavior is read-only or dry-run.
+- Scripts must not touch real external systems by default.
+- Real connectors should be implemented only after copying the skeleton into a private workspace.
+
+## Data Layer
+
+Real data belongs in the adopter's private local workspace and should be ignored by Git. The framework repository provides only example files and empty templates.
+
+`templates/data/` provides redacted example data structures, including users, groups, group membership details, user-group views, group-message indexes, and NAS import planning. Real runtime data must be synchronized by trusted private connectors and must not be committed.

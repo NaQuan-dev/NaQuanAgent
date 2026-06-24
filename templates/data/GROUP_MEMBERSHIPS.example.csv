@@ -1,0 +1,2 @@
+chat_ref,user_id,membership_status,role_in_chat,joined_at,left_at,source,verified_at,notes
+<CHAT_REF>,<USER_ID>,active,<CHAT_ROLE>,<YYYY-MM-DD>,,<CONNECTOR_NAME>,<YYYY-MM-DD>,<NOTES>

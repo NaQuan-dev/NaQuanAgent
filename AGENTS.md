@@ -1,61 +1,60 @@
 # AGENTS.md
 
-本仓库是可复用的 Agent 框架仓库，不是任何组织的真实运行工作区。根规则只保留框架维护时必须常驻上下文的约束；具体组织、人员、客户、会话和密钥资料必须留在本地私有目录中。
+This repository is a reusable Agent framework, not a live organization workspace. The root rules should only contain constraints that must always be present when maintaining the framework. Real organization data, people data, customer data, conversations, secrets, credentials, and operational records must stay in local private directories.
 
-## 1. 输出和协作
+## Output And Collaboration
 
-- 默认使用简体中文回复，除非用户明确要求其他语言。
-- 先给结论、改动结果和验证结果，再补充必要过程。
-- 代码、命令、路径、配置键和错误信息保持原文。
-- 不猜测真实业务事实、人员身份、客户信息或线上系统状态。
+- Use Simplified Chinese with the user by default, unless the user explicitly asks for another language.
+- Lead with the conclusion, the change result, and the verification result before adding process details.
+- Keep code, commands, paths, config keys, and error messages in their original form.
+- Do not guess real business facts, user identities, customer information, permissions, or live system state.
+- Before known high-risk tasks, read the relevant `COMMON_ERRORS.md` entries and apply the preflight strategy. Do not wait until a recorded mistake happens again before using the known correct path.
 
-## 2. 仓库边界
+## Repository Boundary
 
-本仓库只允许提交：
+Only commit:
 
-- 框架说明文档。
-- Agent 根规则模板和子 Agent 模板。
-- 按需读取规则模板。
-- 脱敏配置示例。
-- 不触达真实外部系统的脚本骨架。
+- Framework documentation.
+- Root Agent rule templates and sub-agent templates.
+- On-demand rule templates.
+- Redacted configuration examples.
+- Read-only or dry-run script skeletons that do not touch real external systems.
 
-不得提交：
+Do not commit:
 
-- 真实组织资料、员工资料、客户资料、报价、财务、人事、图纸或业务数据。
-- 外部消息平台会话、用户标识、群聊标识、聊天记录或附件。
-- 运行日志、缓存、临时文件、下载文件、模型输出归档或本地运行状态。
-- token、密钥、账号密码、app secret、cookie、私有配置或 `.env`。
-- 带有真实组织名称、员工姓名、客户名称、内部项目名称的文档或路径。
+- Real organization, employee, customer, quote, finance, HR, drawing, or business data.
+- External messaging sessions, user identifiers, group identifiers, chat records, or attachments.
+- Logs, caches, temporary files, downloads, model output archives, or local runtime state.
+- Tokens, keys, account passwords, app secrets, cookies, private config, or `.env` files.
+- Documents or paths containing real organization names, employee names, customer names, or internal project names.
 
-## 3. 推荐结构
+## Template Boundary
 
-- `README.md`：框架说明和接入步骤。
-- `docs/`：架构、安全和发布检查文档。
-- `templates/AGENTS.md`：新工作区根规则模板。
-- `templates/agent_rules/`：按需读取规则模板。
-- `templates/subagent/`：子 Agent 工作区模板。
-- `templates/scripts/`：只读或 dry-run 脚本骨架。
-- `scripts/README.md`：说明本地真实脚本不进仓库。
+- `templates/` stores redacted skeletons that are safe for GitHub; it is not the source of truth for a live Agent or sub-agent.
+- Live rules should live in the adopter's private local workspace.
+- Do not sync live `AGENTS.md`, `SUB_AGENT.md`, or private rules into `templates/` unless the user explicitly asks to publish redacted templates.
+- When publishing to GitHub, first redact live rules into placeholder templates, then run a sensitive-data scan.
 
-## 4. 修改规则
+## File Search
 
-- 修改文件前先读取现有内容。
-- 不覆盖用户已有改动，除非用户明确要求。
-- 不删除、清空或批量移动本地私有目录。
-- 新增模板时使用占位符，例如 `<WORKSPACE_ROOT>`、`<ORG_NAME>`、`<USER_ID>`、`<CONNECTOR_NAME>`。
-- 模板中不要写真实路径、真实 ID、真实姓名、真实业务系统地址或真实 API 参数。
+- `.gitignore` may hide real runtime directories; not finding private files in default search does not mean they do not exist.
+- When looking for live rules, employee records, group sub-agents, or private workspace content, do not rely only on default `rg --files` or default full-text search.
+- First list the intended private directory, then search that explicit directory with ignored files included.
+- If a default search hits `templates/`, treat it as a template hit only. Do not use template content as live runtime context unless the task is template maintenance or GitHub publishing.
 
-## 5. 发布前检查
+## Edit Rules
 
-提交或推送前必须确认：
+- Read existing content before editing a file.
+- Do not overwrite user changes unless explicitly requested.
+- Do not delete, empty, or bulk-move local private directories.
+- New templates must use placeholders such as `<WORKSPACE_ROOT>`, `<ORG_NAME>`, `<USER_ID>`, and `<CONNECTOR_NAME>`.
+- Templates must not include real paths, real IDs, real names, real business system URLs, or real API parameters.
 
-- `git status` 中没有意外的真实数据文件。
-- `git diff --cached --name-status` 只包含框架、模板、脚本骨架和脱敏文档。
-- 当前待提交文件树不包含真实 token、密钥、用户 ID、会话 ID、组织名称、员工姓名、客户名称或内部业务关键词。
-- 如果旧 Git 历史曾包含敏感信息，删除当前文件不等于清除历史；需要单独评估是否重写历史并强推。
+## Verification And Release
 
-## 6. 验证
-
-- 能跑静态检查就跑静态检查。
-- 对 Markdown、JSON、TOML、PowerShell 模板至少做基本格式和关键词扫描。
-- 如果无法验证某项风险，明确说明没有验证的范围和原因。
+- Run static checks when available.
+- For Markdown, JSON, TOML, and PowerShell templates, run at least basic format and sensitive-keyword checks.
+- Before commit or push, confirm `git status` and `git diff --cached --name-status` contain no unexpected real data files.
+- The staged tree must not contain real tokens, secrets, user IDs, session IDs, organization names, employee names, customer names, or internal business keywords.
+- Removing a sensitive file from the current tree does not remove it from Git history. If old history contains sensitive data, evaluate history rewriting separately.
+- If a risk cannot be verified, state the unverified scope and reason clearly.

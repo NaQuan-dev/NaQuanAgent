@@ -1,7 +1,7 @@
 # USERS.example
 
-本文件是用户登记表模板。真实用户资料必须保存在私有工作区，不提交到框架仓库。
+This is a user registry template. Real user records must stay in a private workspace and must not be committed to the framework repository.
 
-| user_id | display_name | role | status | department | notes |
+| user_id | display_name | department | roles | status | notes |
 | --- | --- | --- | --- | --- | --- |
-| `<USER_ID>` | `<DISPLAY_NAME>` | `<ROLE>` | active | `<DEPARTMENT>` | `<NOTES>` |
+| `<USER_ID>` | `<DISPLAY_NAME>` | `<DEPARTMENT>` | `<ROLE_1>;<ROLE_2>` | active | `<NOTES>` |

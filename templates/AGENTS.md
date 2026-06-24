@@ -1,43 +1,55 @@
 # AGENTS.md
 
-本文件是 `<WORKSPACE_NAME>` 工作区的 Agent 启动级规则。它只保留必须常驻上下文的核心规则；详细流程按需读取 `<RULES_DIR>` 下的对应文件。
+This file is the resident Agent rule file for `<WORKSPACE_NAME>`. Keep it small. Detailed procedures should be loaded on demand from `<RULES_DIR>`.
 
-## 1. 核心原则
+## Core Principles
 
-- 默认使用简体中文回复，除非用户明确要求其他语言。
-- 结果优先，先给结论、草案或改动结果，再补充必要说明。
-- 代码、命令、路径、配置项和错误信息保持原文。
-- 不猜测组织事实、人员身份、权限、客户信息或线上系统状态。
+- Use Simplified Chinese with end users by default, unless the user explicitly asks for another language.
+- If this workspace is adapted for an English-speaking team, change the default response language here.
+- Lead with the result, draft, or change outcome before adding necessary explanation.
+- Keep code, commands, paths, config keys, and error messages in their original form.
+- Do not guess organization facts, identities, permissions, customer information, or live system state.
+- For vague low-risk requests, internally convert the request into a structured task and produce a useful first draft instead of teaching the user how to write prompts.
 
-## 2. 本地环境
+## Local Environment
 
-- 工作区根目录：`<WORKSPACE_ROOT>`
-- 私有资料目录：`<PRIVATE_DATA_DIR>`
-- 规则目录：`<RULES_DIR>`
-- 日志目录：`<LOG_DIR>`
-- 临时目录：`<TEMP_DIR>`
-- 涉及中文、长文本或 JSON 参数时，优先使用 UTF-8 文件、标准输入或 Base64。
+- Workspace root: `<WORKSPACE_ROOT>`
+- Private data directory: `<PRIVATE_DATA_DIR>`
+- Rules directory: `<RULES_DIR>`
+- Memory review directory: `<MEMORY_REVIEW_DIR>`
+- Log directory: `<LOG_DIR>`
+- Temporary directory: `<TEMP_DIR>`
+- For non-ASCII text, long text, or JSON parameters, prefer UTF-8 files, standard input, or Base64.
 
-## 3. 按需读取
+## On-Demand Rules
 
-| 场景 | 必读规则 |
+| Scenario | Read First |
 | --- | --- |
-| 用户身份、权限、资料访问 | `<RULES_DIR>/identity_access.md` |
-| 外部消息、任务、日程、邮件、线上写操作 | `<RULES_DIR>/external_actions.md` |
-| 长期上下文、记忆压缩、历史沉淀 | `<RULES_DIR>/memory_context.md` |
-| 文件读写、日志、临时目录、编码 | `<RULES_DIR>/workspace_io.md` |
-| Git 提交、推送、公开仓库安全 | `<RULES_DIR>/git_publish_safety.md` |
+| Rule source of truth, read timing, write permission, review requirements | `<RULES_DIR>/rule_registry.md` / `<RULES_DIR>/rule_registry.example.json` |
+| Known-error preflight, encoding/arguments/search/Git/connector pitfalls | `<RULES_DIR>/common_error_preflight.md` + `COMMON_ERRORS.md` |
+| Vague employee requests, prompt intake, clarification | `<RULES_DIR>/request_intake.md` |
+| User identity, permissions, data access | `<RULES_DIR>/identity_access.md` |
+| Private query over group messages, group membership checks | `<RULES_DIR>/identity_access.md` and `<RULES_DIR>/memory_context.md` |
+| External messages, file delivery, tasks, calendar, mail, online writes | `<RULES_DIR>/external_actions.md` |
+| Long-term context, memory compression, history consolidation | `<RULES_DIR>/memory_context.md` |
+| Hook guardrails, inbound/outbound/artifact/memory/automation boundaries | `<RULES_DIR>/hook_guardrails.md` |
+| Context budget, memory slimming, file length thresholds | `<RULES_DIR>/context_budget.md` |
+| Daily review, department memory, knowledge candidates, automation writeback | `<RULES_DIR>/daily_review_core.md` |
+| File I/O, logs, temporary directories, encoding | `<RULES_DIR>/workspace_io.md` |
+| Audio/video transcription artifacts and generated-minutes cleanup | `<RULES_DIR>/voice_note_minutes_retention.md` |
+| Git commit, push, and public repository safety | `<RULES_DIR>/git_publish_safety.md` |
 
-## 4. 安全底线
+## Safety Baseline
 
-- 修改文件前先读取现有内容。
-- 不覆盖用户已有改动，除非用户明确要求。
-- 不删除、清空或批量移动重要目录，除非用户明确确认。
-- 不把密钥、token、私有配置、真实会话、人员信息或客户信息写入文档、代码或回复。
-- 任何会触达外部系统的操作，执行前必须确认对象、内容、影响和是否立即触达。
+- Read existing content before editing a file.
+- Do not overwrite user changes unless explicitly requested.
+- Do not delete, empty, or bulk-move important directories without explicit confirmation.
+- Do not write secrets, tokens, private config, real sessions, people data, or customer data into docs, code, or replies.
+- Any action that touches an external system requires confirmation of target, content, impact, and whether it should execute immediately.
+- Generated artifacts are not complete until delivered to the requesting user or the approved destination; a local path alone is not delivery.
 
-## 5. 验证
+## Verification
 
-- 能跑测试就跑相关测试。
-- 没有测试时做最小 smoke check。
-- 无法验证时说明未验证范围、原因和剩余风险。
+- Run relevant tests when available.
+- If there are no tests, run the smallest meaningful smoke check.
+- If verification is not possible, state the unverified scope, reason, and remaining risk.

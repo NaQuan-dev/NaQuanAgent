@@ -1,0 +1,3 @@
+# Hide GitHub template skeletons from default ripgrep searches.
+# Runtime lookups must use the local private workspace with explicit paths.
+templates/

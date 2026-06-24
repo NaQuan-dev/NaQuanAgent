@@ -1,23 +1,35 @@
-# <PROJECT_OR_GROUP_NAME> Context
+# Group Context
 
-本文件用于保存子 Agent 的长期上下文模板。复制到真实工作区后再填写具体内容；不要把真实内容提交回框架仓库。
+This file stores stable, long-term context for `<GROUP_NAME>`. It must not contain raw chat logs, secrets, customer private data, or one-off task details.
 
-## 长期目标
+## Current Scope
 
-- `<GOAL_1>`
+- Group/project/domain: `<GROUP_NAME>`
+- Main purpose: `<GROUP_PURPOSE>`
+- Primary users: `<USER_GROUP_DESCRIPTION>`
 
-## 固定流程
-
-- `<PROCESS_1>`
-
-## 分工和联系人
-
-- `<ROLE_OR_CONTACT_PLACEHOLDER>`
-
-## 偏好
+## Stable Preferences
 
 - `<PREFERENCE_1>`
 
-## 待确认
+## Workflows
+
+- `<WORKFLOW_1>`
+
+## Group Membership And Message Index
+
+- `members.md`: group member cache.
+- `group_memberships.csv`: relationship details, one row per user-group membership interval.
+- `group_message_index.csv`: group message search index. Store only fields needed for retrieval and summaries, not unrelated small talk or full attachments.
+- User-group views can be generated from membership details. If views conflict, use the most recent trusted connector verification.
+- For private queries over group messages, confirm that the requester is currently in the group, then filter by message index and visibility. If permission is unclear, refuse by default.
+
+## Open Questions
 
 - `<OPEN_QUESTION_1>`
+
+## Maintenance Notes
+
+- Deduplicate before adding new items.
+- Remove or rewrite stale one-off conclusions.
+- Move company-wide facts, formal SOPs, and cross-group rules into review candidates.

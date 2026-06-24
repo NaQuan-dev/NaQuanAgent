@@ -1,25 +1,32 @@
 # Retention Policy
 
-本文件是新媒体子 Agent 的资料留存策略模板。真实留存规则应在私有工作区维护。
+This template defines retention principles for a content-operations sub-agent. Replace placeholders only in a private workspace.
 
-## 保留
+## Keep
 
-- 已确认的内容策略。
-- 可复用选题方向。
-- 经过授权的素材索引。
-- 发布后复盘结论。
-- 长期有效的渠道经验。
+- Confirmed content strategy.
+- Approved reusable copy patterns.
+- Published content references.
+- Stable review conclusions.
+- Asset indexes and authorization notes.
 
-## 不保留
+## Archive
 
-- 未授权个人信息。
-- 未授权客户或合作方资料。
-- 原始聊天记录全文。
-- 临时情绪、随手草稿和重复素材。
-- token、密钥、cookie、登录态和私有配置。
+- Drafts after final selection.
+- Expired campaign materials.
+- Old topic experiments.
+- Raw processing records after summarization.
 
-## 压缩
+## Do Not Store Long-Term
 
-- 原始对话和素材处理记录应定期压缩为结论。
-- 长期上下文只保留稳定事实、流程、偏好和待确认事项。
-- 无法确认来源或授权状态的内容标记为待确认，不写入正式素材库。
+- Raw full chat logs.
+- Unauthorized customer or personal information.
+- Quotes, contracts, finance, HR, drawings, accounts, secrets, or internal config.
+- One-off task details that do not affect future behavior.
+
+## Private Query And Message Index
+
+- Group member cache is stored in `members.md`.
+- Group membership details are stored in `group_memberships.csv`.
+- Group message search index is stored in `group_message_index.csv`, with only message references, sender, time, type, summary, customer references, visibility scope, and retention date.
+- Private query requires stable requester identity and current group membership. If the member has left, the group disables private query, the message is past retention, or permission cannot be confirmed, do not return message content.

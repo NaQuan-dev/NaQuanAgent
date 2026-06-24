@@ -1,26 +1,42 @@
 # Identity And Access
 
-## 原则
+## Identity Records
 
-- 用户身份以稳定、不可变的用户标识为主。
-- 姓名、岗位、部门、昵称只能辅助判断，不能作为唯一权限依据。
-- 无法确认身份或权限时，默认拒绝读取或输出敏感信息。
+Store real identity data only in the private workspace. Suggested fields:
 
-## 用户登记模板
+- `user_id`: stable internal identifier.
+- `display_name`: human-readable name.
+- `department`: organization unit or team.
+- `roles`: role labels or permission groups.
+- `status`: active, inactive, pending, or blocked.
+- `external_accounts`: connector-specific IDs stored privately.
 
-登记表至少包含：
+All fields in framework templates must be placeholders or generic examples.
 
-- `user_id`
-- `display_name`
-- `role`
-- `status`
-- `department`
-- `notes`
+## Group Membership
 
-所有字段必须使用占位符或本地私有数据，不得写入框架仓库。
+Group membership is real runtime data and must stay in the private workspace. Maintain three views when possible:
 
-## 权限边界
+- Group view: each group lists current active members.
+- User view: each user lists current active groups.
+- Relationship detail: one row per user-group membership interval, used as the authoritative source.
 
-- 普通用户只能查看和更新自己的非身份信息。
-- 管理员才能修改角色、状态、身份主键和他人资料。
-- 跨项目、跨群组、跨部门读取资料时，必须确认请求人权限和任务必要性。
+The group view and user view must be regenerable from the same relationship detail file. If they conflict, use the most recent trusted connector verification. Do not grant access based on names, nicknames, or informal descriptions.
+
+## Permission Boundaries
+
+- Ordinary users may view and update only their own non-identity preferences.
+- Administrators are required for role, status, stable identity key, or other-user record changes.
+- Cross-project, cross-group, or cross-department data access requires both user permission and task necessity.
+
+## Private Query Over Group Messages
+
+When a user asks privately about group messages, perform these checks first:
+
+- Resolve the requester's stable `user_id`; do not rely on name, nickname, or job title alone.
+- Read the private user-group view to determine the requester's currently accessible groups.
+- Search only groups where the requester is currently an active member and private query is allowed.
+- For "messages I sent" queries, also filter `sender_user_id` to the requester.
+- Before output, filter again by `user_id`, group scope, and private-query permission.
+
+Do not reveal group messages, full member lists, raw platform identifiers, attachment contents, customer private data, or other sensitive context to users who are not active authorized members. If membership is missing, stale, or conflicting, verify access first. If access cannot be verified, refuse the read.

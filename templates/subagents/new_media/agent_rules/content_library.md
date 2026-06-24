@@ -1,24 +1,24 @@
 # Content Library
 
-## 资料类型
+## Material Types
 
-- 品牌定位资料。
-- 产品或服务资料。
-- 目标受众画像。
-- 素材索引。
-- 历史选题和脚本。
-- 发布和复盘记录。
+- Brand positioning materials.
+- Product or service materials.
+- Audience personas.
+- Asset indexes.
+- Historical topics and scripts.
+- Publishing and retrospective records.
 
-## 读取顺序
+## Reading Order
 
-1. 已确认的组织事实资料。
-2. 当前任务指定资料。
-3. 本子 Agent 长期上下文。
-4. 经过授权的素材库。
-5. 历史草稿和旧参考。
+1. Confirmed organization facts.
+2. Materials explicitly provided for the current task.
+3. This sub-agent's long-term context.
+4. Authorized asset libraries.
+5. Historical drafts and old references.
 
-## 使用原则
+## Usage Rules
 
-- 旧内容只能作为表达和方法参考。
-- 与已确认事实冲突时，以已确认事实为准。
-- 素材授权状态不明时不得用于发布稿。
+- Old content is a style and method reference only.
+- If old content conflicts with confirmed facts, use confirmed facts.
+- Do not use assets for publishable output when authorization status is unclear.

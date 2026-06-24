@@ -1,0 +1,3 @@
+employee_ref,nas_username,display_name,status,groups,quota_gb,home_enabled,notes
+<EMPLOYEE_REF>,<NAS_USERNAME>,<DISPLAY_NAME>,active,<GROUP_A>;<GROUP_B>,10,true,<NOTES>
+<EMPLOYEE_REF_DISABLED>,<NAS_USERNAME_DISABLED>,<DISPLAY_NAME_DISABLED>,disabled,<GROUP_A>,0,false,<NOTES>

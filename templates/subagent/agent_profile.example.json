@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "updated_at": "<YYYY-MM-DD>",
+  "group_name": "<GROUP_NAME>",
+  "profile_type": "<department_specific|company_daily_review_pilot|general>",
+  "description": "<SHORT_PROFILE_DESCRIPTION>",
+  "daily_review": {
+    "enabled": true,
+    "profile": "daily_review_core",
+    "send_to_group": false,
+    "send_time": "08:30",
+    "write_group_context": true,
+    "write_tasks": true,
+    "protect_existing_content": true,
+    "do_not_copy_department_specific_profile": true
+  },
+  "knowledge_draft": {
+    "allow_company_candidate": true,
+    "allow_human_kb_draft": true,
+    "allow_agent_kb_draft": true,
+    "human_knowledge_base_rule": "Human knowledge base is primarily for people, suitable for official SOP, FAQ, templates, and documentation.",
+    "agent_knowledge_base_rule": "Agent knowledge base is primarily for agents, suitable for task manuals, retrieval maps, execution paths, and draft candidates."
+  },
+  "cross_group": {
+    "read_other_groups": false,
+    "sync_to_other_groups": false,
+    "sync_scope": "<REDACTED_SUMMARY_ONLY>",
+    "requires_readback": true
+  },
+  "hooks": {
+    "inbound_route": true,
+    "outbound_safety": true,
+    "artifact_delivery": true,
+    "memory_write_guard": true,
+    "automation_write_guard": true
+  },
+  "redaction": {
+    "block_customer_private_info": true,
+    "block_price_contract_crm": true,
+    "block_employee_private_info": true,
+    "block_local_paths": true,
+    "block_tokens_and_secrets": true,
+    "block_raw_transcripts": true
+  },
+  "context_budget": {
+    "sub_agent_max_lines": 120,
+    "group_context_max_lines": 200,
+    "todo_max_lines": 160,
+    "profile_max_lines": 120
+  },
+  "automation_policy": {
+    "daily_review_automation": "<AUTOMATION_ID_OR_NONE>",
+    "pilot_no_group_send": true,
+    "weekly_review_admin_only": true,
+    "official_knowledge_write": "draft_only",
+    "common_errors_write": "candidate_only"
+  }
+}

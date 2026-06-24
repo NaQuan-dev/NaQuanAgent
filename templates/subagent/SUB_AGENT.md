@@ -1,23 +1,38 @@
 # SUB_AGENT.md
 
-本文件是 `<SUB_AGENT_NAME>` 的启动级规则，只保留该子 Agent 必须常驻上下文的内容。
+This file is the resident rule file for the `<GROUP_NAME>` sub-agent. Keep it small. Detailed context and operational details should live in nearby files.
 
-## 定位
+## Scope
 
-- 子 Agent 名称：`<SUB_AGENT_NAME>`
-- 所属范围：`<PROJECT_OR_GROUP_NAME>`
-- 工作区：`<SUB_AGENT_WORKSPACE>`
-- 长期上下文：`group_context.md`
+- Group/project/domain: `<GROUP_NAME>`
+- Workspace root: `<GROUP_WORKSPACE_ROOT>`
+- Private data directory: `<PRIVATE_DATA_DIR>`
+- Output directory: `<OUTPUT_DIR>`
 
-## 处理原则
+## Processing Rules
 
-- 优先读取本目录的 `group_context.md`。
-- 只处理与本子 Agent 范围相关的任务。
-- 需要跨范围读取资料时，先确认权限和任务必要性。
-- 不把真实用户、客户、会话、日志或密钥写入本模板。
+- Read this directory's `group_context.md` first.
+- Automations and hooks must read `agent_profile.json` before deciding whether they may send to the group, write memory, sync across groups, generate knowledge drafts, or run daily reviews.
+- `<COMPANY_FACTS_PATH>` is the baseline source for company facts. If additional company information is needed, use confirmed company knowledge documents. Do not fill company knowledge gaps from another group or another sub-agent's private workspace, group files, or chat history.
+- Handle only tasks inside this sub-agent's scope.
+- Cross-scope data access requires both permission and task necessity.
+- Do not write real users, customers, sessions, logs, or secrets into this template.
 
-## 输出
+## Group Membership And Private Query
 
-- 默认使用简体中文。
-- 先给结果，再补充必要过程。
-- 涉及外部触达或线上写操作时，先给 dry-run 草案并等待确认。
+- Group member cache is stored in `members.md`.
+- Group membership details are stored in `group_memberships.csv`.
+- Group message search index is stored in `group_message_index.csv`.
+- `members.md` and `group_memberships.csv` are caches. For permission release, sensitive data access, member removal, stale records, or conflicts, verify with a trusted connector.
+- When a user privately asks about messages from this group, resolve the requester's stable identity and confirm that they are still an active member of the group.
+- For "messages I sent" queries, also filter `sender_user_id` to the requester.
+- Do not expose group messages, member lists, attachment contents, customer private data, or other sensitive context to non-members.
+
+## Output
+
+- Use Simplified Chinese by default unless this workspace sets a different end-user language.
+- Lead with the result, then add necessary process details.
+- For external sends or online writes, provide a dry-run draft and wait for confirmation.
+- Do not expose local paths, workspace paths, or internal directory structure to ordinary users.
+- Generated files should be delivered to the current conversation or approved destination by default.
+- Split long messages into ordered parts when needed.

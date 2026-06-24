@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "updated_at": "<YYYY-MM-DD>",
+  "purpose": "Define the single source of truth, read timing, write boundary, and review requirement for agent rules and knowledge.",
+  "principles": [
+    "Read the registry first, then load only task-relevant rules.",
+    "Human knowledge base is primarily for people.",
+    "Agent knowledge base is primarily for agents.",
+    "Company facts file is the company fact baseline.",
+    "Known common errors are preflight inputs before risky actions.",
+    "Group and employee context files are local working memory, not official company fact sources.",
+    "High-risk updates become review candidates before publication."
+  ],
+  "sources": [
+    {
+      "id": "root_rules",
+      "label": "Root agent rules",
+      "path": "AGENTS.md",
+      "owner": "<AI_ADMIN_ROLE>",
+      "read_when": "Every framework maintenance task and high-risk connector workflow.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["real customer data", "employee private data", "tokens", "secrets", "raw chat records"]
+    },
+    {
+      "id": "common_error_preflight",
+      "label": "Common error preflight",
+      "path": "COMMON_ERRORS.md + <RULES_DIR>/common_error_preflight.md",
+      "owner": "<AI_ADMIN_ROLE>",
+      "read_when": "Before risky tasks involving config/script writes, long command parameters, model capacity, context length, hidden private directories, Git publication, hooks, session repair, or pre-model connector failures.",
+      "write_allowed_by_automation": "candidate_only",
+      "review_required": true,
+      "do_not_store": ["real paths beyond generic examples", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "raw chat"]
+    },
+    {
+      "id": "common_error_candidates",
+      "label": "Common error update candidates",
+      "path": "<MEMORY_REVIEW_DIR>/common_errors_update_pending.md",
+      "owner": "<AI_ADMIN_ROLE>",
+      "read_when": "During weekly memory compression, governance review, or after a new generic engineering/runtime failure is observed.",
+      "write_allowed_by_automation": "candidate_only",
+      "review_required": true,
+      "do_not_store": ["real paths beyond generic examples", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "raw chat"]
+    },
+    {
+      "id": "group_profile",
+      "label": "Group machine-readable profile",
+      "path": "<GROUP_WORKSPACE>/agent_profile.json",
+      "owner": "<AI_ADMIN_ROLE>",
+      "read_when": "Automation or hook needs to know allowed sends, writes, redaction, or cross-group behavior.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["platform ids unless necessary", "secrets"]
+    }
+  ]
+}

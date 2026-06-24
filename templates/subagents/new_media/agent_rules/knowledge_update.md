@@ -1,24 +1,24 @@
 # Knowledge Update
 
-## 可沉淀内容
+## May Be Consolidated
 
-- 已确认的组织定位。
-- 已确认的产品或服务描述。
-- 已确认的目标受众。
-- 长期有效的内容策略。
-- 复盘后稳定成立的经验。
+- Confirmed organization positioning.
+- Confirmed product or service descriptions.
+- Confirmed target audiences.
+- Long-lived content strategy.
+- Stable lessons from retrospectives.
 
-## 不沉淀内容
+## Do Not Consolidate
 
-- 未经确认的口头说法。
-- 未授权素材。
-- 私人信息和客户隐私。
-- 一次性临时讨论。
-- 与当前子 Agent 范围无关的信息。
+- Unconfirmed verbal statements.
+- Unauthorized materials.
+- Personal information and customer privacy.
+- One-off temporary discussion.
+- Information outside this sub-agent's scope.
 
-## 更新流程
+## Update Flow
 
-1. 标明来源和日期。
-2. 判断是否稳定、必要、可复用。
-3. 不确定则写入待确认。
-4. 管理员确认后再进入正式长期上下文。
+1. Mark source and date.
+2. Decide whether the item is stable, necessary, and reusable.
+3. If uncertain, write it as `to confirm`.
+4. Move it into formal long-term context only after administrator confirmation.

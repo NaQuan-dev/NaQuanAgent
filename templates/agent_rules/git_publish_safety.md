@@ -1,20 +1,20 @@
 # Git Publish Safety
 
-## 发布原则
+## Publishing Principle
 
-- 仓库只提交框架、模板、脚本骨架和脱敏文档。
-- 默认拒绝提交本地真实运行数据。
-- 即使仓库是私有，也按未来可能共享处理。
+- Commit only framework docs, templates, script skeletons, and redacted examples.
+- Default to rejecting local runtime data.
+- Treat even private repositories as if they may be shared later.
 
-## 禁止提交
+## Do Not Commit
 
-- 真实组织资料、员工信息、客户信息、供应商信息。
-- 外部平台会话、聊天记录、附件、用户 ID、群组 ID。
-- token、密钥、账号密码、app secret、cookie、私有配置。
-- 日志、缓存、下载、临时文件和运行状态。
-- 真实业务系统接口参数、订单号、项目号、报价、财务和人事资料。
+- Real organization, employee, customer, or vendor information.
+- External platform sessions, chat records, attachments, user IDs, or group IDs.
+- Tokens, keys, account passwords, app secrets, cookies, or private config.
+- Logs, caches, downloads, temporary files, and runtime state.
+- Real business-system API parameters, order numbers, project numbers, quotes, finance, and HR records.
 
-## 提交前检查
+## Pre-Commit Checks
 
 ```powershell
 git status -sb
@@ -23,9 +23,9 @@ git diff --cached --check
 git grep --cached -n -E "token|secret|password|passwd|Authorization|Bearer|cookie|open_id|chat_id|user_id|client_secret|app_secret" -- .
 ```
 
-还应按当前组织追加组织名、员工姓名、客户名称、内部系统名称和内部项目关键词扫描。
+Also scan for environment-specific organization names, employee names, customer names, internal system names, and internal project keywords.
 
-## 历史风险
+## History Risk
 
-- 删除当前文件不会删除 Git 历史。
-- 旧提交如果含敏感内容，需要单独评估历史重写和强推。
+- Deleting a file in the current commit does not remove it from Git history.
+- If old commits contain sensitive content, evaluate history rewriting and force-push risk separately.

@@ -1,0 +1,2 @@
+message_ref,chat_ref,sender_user_id,sent_at,message_type,content_scope,content_summary,customer_refs,acl_chat_refs,private_query_allowed,retention_until,source_ref_hash,notes
+<MESSAGE_REF>,<CHAT_REF>,<USER_ID>,<YYYY-MM-DDTHH:MM:SS+08:00>,text,group,<CONTENT_SUMMARY>,<CUSTOMER_REF>,<CHAT_REF>,true,<YYYY-MM-DD>,<SOURCE_REF_HASH>,<NOTES>

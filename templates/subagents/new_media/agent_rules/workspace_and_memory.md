@@ -1,25 +1,25 @@
 # Workspace And Memory
 
-## 推荐目录
+## Directory Layout
 
 ```text
-archive/              # 已归档资料
-outputs/              # 输出成果
-skills/               # 本子 Agent 私有技能或参考方法
-tasks/                # 任务记录
-workspace/inbox/      # 待处理输入
-workspace/processing/ # 处理中资料
+archive/             # Archived source materials and old drafts
+outputs/             # Deliverables
+skills/              # Optional local skills
+tasks/               # Task lists and follow-ups
+workspace/inbox/     # Incoming materials
+workspace/processing/# Processing area
 ```
 
-## 文件处理
+## Memory Rules
 
-- 输入材料先进入 `workspace/inbox/`。
-- 处理中材料放入 `workspace/processing/`。
-- 正式成果放入 `outputs/`。
-- 可复用参考材料经审查后进入 `archive/`。
+- Stable goals, fixed workflows, content pillars, and retrospective conclusions go into `group_context.md`.
+- Raw conversations and temporary drafts do not go directly into long-term memory.
+- Mark uncertain authorization, fact, or data status as `to confirm`.
 
-## 长期记忆
+## Group Membership And Message Index
 
-- 长期目标、固定流程、内容支柱和复盘结论写入 `group_context.md`。
-- 原始对话和临时草稿不直接写入长期记忆。
-- 涉及授权、事实或数据不确定时标记待确认。
+- `members.md` stores this group's member cache.
+- `group_memberships.csv` stores membership relationship details.
+- `group_message_index.csv` stores the group message search index with only required retrieval fields and summaries.
+- For private queries over this group's historical messages, assets, or customer-related clues, confirm that the requester is still in this group, then filter by message-index visibility.

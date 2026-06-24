@@ -1,28 +1,28 @@
 # Content Workflow
 
-## 选题
+## Topic Planning
 
-- 明确目标受众。
-- 明确内容目标。
-- 明确事实依据。
-- 明确渠道和形式。
+- Define the target audience.
+- Define the content goal.
+- Define the factual basis.
+- Define channel and format.
 
-## 脚本
+## Scripts
 
-- 先输出结构，再输出正文。
-- 关键事实保留待核对标记。
-- 行动引导应与真实转化路径一致。
-- 不用夸大、绝对化或无法验证的表达。
+- Output structure before full copy.
+- Keep key facts marked for review when needed.
+- Calls to action must match the real conversion path.
+- Avoid exaggerated, absolute, or unverifiable wording.
 
-## 拆解和复盘
+## Analysis And Retrospective
 
-- 拆解时记录标题、钩子、结构、节奏、证据、转化点。
-- 复盘时区分数据事实、主观判断和下一步实验。
-- 可复用结论进入长期上下文候选。
+- When analyzing content, record title, hook, structure, pace, evidence, and conversion point.
+- During retrospectives, separate data facts, subjective judgment, and next experiments.
+- Reusable conclusions become long-term context candidates.
 
-## 发布前检查
+## Pre-Publish Check
 
-- 事实是否可追溯。
-- 素材是否授权。
-- 是否包含敏感信息。
-- 是否需要管理员确认。
+- Are facts traceable?
+- Are materials authorized?
+- Does it contain sensitive information?
+- Does it need administrator approval?

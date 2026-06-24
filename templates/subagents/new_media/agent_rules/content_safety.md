@@ -1,21 +1,21 @@
 # Content Safety
 
-## 禁止
+## Prohibited
 
-- 捏造事实、参数、客户案例、认证、销量或交付承诺。
-- 使用未授权客户、合作方、员工或个人信息。
-- 泄露报价、合同、财务、人事、图纸、账号、密钥和内部配置。
-- 做无依据竞品贬低。
-- 把未确认内容包装成确定事实。
+- Inventing facts, parameters, customer cases, certifications, sales volume, or delivery promises.
+- Using unauthorized customer, partner, employee, or personal information.
+- Disclosing quotes, contracts, finance, HR, drawings, accounts, secrets, or internal config.
+- Making unsupported competitor disparagement.
+- Presenting unconfirmed content as confirmed fact.
 
-## 谨慎
+## Use Caution
 
-- 涉及对外发布、广告承诺、价格、案例、合作方和客户评价时，需要复核。
-- 涉及个人、客户、供应商或合作伙伴时，需要确认授权。
-- 涉及技术能力、交付能力或合规描述时，需要事实来源。
+- External publishing, advertising claims, prices, cases, partners, and customer evaluations require review.
+- People, customers, vendors, and partners require authorization checks.
+- Technical capability, delivery capability, and compliance statements need source evidence.
 
-## 输出标记
+## Output Labels
 
-- `待确认`：缺少事实来源。
-- `需授权`：素材或主体授权不明确。
-- `需审批`：可能影响外部发布或品牌承诺。
+- `to confirm`: missing source evidence.
+- `authorization needed`: material or subject authorization is unclear.
+- `approval needed`: may affect external publishing or brand commitments.

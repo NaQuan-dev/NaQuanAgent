@@ -3,6 +3,7 @@
 
 # Repository metadata and framework docs.
 !.gitignore
+!.ignore
 !README.md
 !AGENTS.md
 !COMMON_ERRORS.md
