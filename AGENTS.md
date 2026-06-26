@@ -53,6 +53,13 @@ Do not commit:
 - New templates must use placeholders such as `<WORKSPACE_ROOT>`, `<ORG_NAME>`, `<USER_ID>`, and `<CONNECTOR_NAME>`.
 - Templates must not include real paths, real IDs, real names, real business system URLs, or real API parameters.
 
+## Agent System File Maintenance
+
+- When changing agent runtime behavior, connector hooks, worker execution, automation behavior, sub-agent routing, memory rules, delivery behavior, or default operating rules, update the relevant live agent system files in the same turn.
+- Relevant live files may include `AGENTS.md`, `SUB_AGENT.md`, `group_context.md`, `agent_profile.json`, `agent_rules/index.md`, `rule_registry.json`, local runtime docs, and known-error/preflight docs.
+- Do not rely on the user to remind you to update system files after an agent upgrade or runtime change; treat the synchronization check as part of the task.
+- Do not update `templates/` for live runtime changes unless the user explicitly asks to publish or refresh redacted templates.
+
 ## Verification And Release
 
 - Run static checks when available.

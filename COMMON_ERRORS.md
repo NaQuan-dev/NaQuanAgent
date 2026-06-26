@@ -98,6 +98,61 @@ Verification:
 - Check `git diff --cached --name-status`.
 - Run sensitive-keyword scans against the staged tree.
 
+## Generic Issue: Agent Runtime Changes Are Not Reflected In System Files
+
+Scenario:
+- A connector, hook, worker, automation, sub-agent route, memory rule, delivery rule, or default agent behavior is changed.
+- The implementation works once, but the live agent rules and machine-readable config are not updated.
+
+Typical symptoms/errors:
+- The same reminder has to be given again in later maintenance work.
+- A later model follows older behavior because it reads stale rules.
+- A sub-agent or automation keeps using old routing, memory, or delivery assumptions.
+
+Likely cause:
+- The runtime change was treated as a script/config edit only.
+- The maintainer did not run a system-file synchronization check.
+- Live private rules were hidden by `.gitignore`, and only public templates or implementation files were considered.
+
+Preflight strategy:
+- Before finishing an agent runtime change, identify affected live system files such as root rules, sub-agent entries, group context, machine-readable profiles, rule indexes, registries, runtime docs, and preflight docs.
+- Update live runtime rules in the same turn when behavior changes persistently.
+- Do not update redacted templates unless the task is explicitly about template publication.
+
+Verification:
+- Confirm JSON or machine-readable rule files parse successfully.
+- Confirm the relevant rule index and registry mention the new behavior.
+- Confirm affected sub-agent entry files or runtime docs point to the new rule when needed.
+- Confirm no real IDs, secrets, raw logs, or private business data were added.
+
+## Generic Issue: Generated Files In Connector Attachment Cache Are Not Delivered
+
+Scenario:
+- A chat-triggered task creates a file, spreadsheet, document, image, or archive under a connector attachment/cache directory.
+- The model says the file was generated, but the delivery hook only allows normal output directories.
+
+Typical symptoms/errors:
+- The file exists locally but the requester never receives it in the chat.
+- A delivery log shows one artifact found with zero sent and one blocked item.
+- The final answer contains or implies a local file path instead of an uploaded attachment or online link.
+
+Likely cause:
+- The final deliverable was created next to an incoming attachment instead of under the routed output directory.
+- The delivery whitelist blocks connector attachment/cache paths to avoid leaking arbitrary local files.
+- The hook does not stage verified deliverables from the cache into the routed output directory before sending.
+
+Preflight strategy:
+- Treat local file creation as incomplete until the file upload/send API returns success.
+- Save final deliverables directly under the current routed output directory when possible.
+- If a final deliverable is created in a connector attachment/cache directory and is explicitly referenced in the outgoing response, copy it to the routed output directory first, then send it as an attachment.
+- Do not expose the local path to ordinary chat users.
+
+Verification:
+- Run a dry-run delivery check against the generated file path and current session.
+- Confirm the result would send an attachment and, when applicable, stage the file into the routed output directory.
+- Confirm the actual send response reports success before telling the requester the attachment was sent.
+- Confirm delivery rules and known-error/preflight docs were updated when hook behavior changes.
+
 ## Generic Issue: Model Capacity Is Exhausted
 
 Scenario:
