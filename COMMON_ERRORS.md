@@ -208,6 +208,41 @@ Verification:
 - Use dry-run or a test connector to simulate capacity errors and confirm fallback behavior.
 - Store only error summaries, not real conversation text.
 
+## Generic Issue: Codex Remote Compact Or Responses API Returns 403
+
+Scenario:
+- A local chat connector or background runner calls Codex, and the failure happens in the Codex remote responses or compact step.
+- The incoming chat event may be received by the connector, but the model turn does not complete.
+
+Typical symptoms/errors:
+- `403 Forbidden`
+- `Unable to load site`
+- `responses/compact`
+- `Failed to run pre-sampling compact`
+- `codexSession: turn failed` or `codexSession: process failed`
+
+Likely cause:
+- The current connector session or remote compact request is blocked, expired, or temporarily rejected.
+- The issue is in the model runtime path, not necessarily in the messaging platform delivery path.
+- Retrying the same old turn may keep hitting the same failed remote state.
+
+Related rules/docs:
+- `templates/agent_rules/hook_guardrails.md` for pre-model connector error monitoring.
+- `templates/agent_rules/common_error_preflight.md` for avoiding repeated known runtime walls.
+- `COMMON_ERRORS.md` entry `Pre-Model Connector Failure Makes The Model Blind To Events`.
+
+Preflight strategy:
+- Run a tiny Codex health check from the intended workspace before changing prompts or messaging rules.
+- If the tiny health check succeeds, restart the connector entry process through its approved runner so the next message uses a fresh entry chain.
+- If the tiny health check fails, mark the model runtime as degraded and avoid repeated blind restarts.
+- Keep long-running or context-heavy work in a worker/background path that explicitly loads the required context instead of depending on a stale live window.
+
+Verification:
+- The tiny Codex health check returns the expected minimal response.
+- The connector process is running from the intended workspace.
+- A new incoming message reaches the expected personal or group context.
+- No user-facing placeholder reply is sent before a real result or actionable failure.
+
 ## Generic Issue: Context Window Is Full
 
 Scenario:
