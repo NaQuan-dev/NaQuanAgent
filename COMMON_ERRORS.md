@@ -24,6 +24,9 @@ Typical symptoms/errors:
 Likely cause:
 -
 
+Related rules/docs:
+-
+
 Preflight strategy:
 -
 
@@ -47,6 +50,10 @@ Likely cause:
 - The writer added a UTF-8 BOM.
 - The target program does not tolerate BOM-prefixed config files.
 
+Related rules/docs:
+- `templates/agent_rules/workspace_io.md` for encoding and file-edit expectations.
+- `docs/publish_safety.md` when parser-sensitive config is part of a publish check.
+
 Preflight strategy:
 - Use a writer that explicitly supports UTF-8 without BOM.
 - Do not overwrite critical config with uncertain shell encoding.
@@ -68,6 +75,11 @@ Typical symptoms/errors:
 Likely cause:
 - Shell, script runtime, and external program use different encoding or escaping rules.
 
+Related rules/docs:
+- `templates/agent_rules/workspace_io.md` for file, path, and encoding rules.
+- `templates/agent_rules/external_actions.md` when the text is sent to an external system.
+- `COMMON_ERRORS.md` entry `Windows PowerShell 5.1 Misparses UTF-8 Without BOM Source Containing Non-ASCII Text` when the problem involves `.ps1` source.
+
 Preflight strategy:
 - Prefer UTF-8 temporary files, standard input, or UTF-8 Base64 for long text.
 - Use native commands and literal path parameters when handling paths.
@@ -88,6 +100,11 @@ Typical symptoms/errors:
 Likely cause:
 - `.gitignore` is not default-deny.
 - A new directory was added without deciding whether it belongs to the reusable framework.
+
+Related rules/docs:
+- `AGENTS.md` sections `Repository Boundary`, `Template Boundary`, and `Verification And Release`.
+- `docs/publish_safety.md` for GitHub publication checks.
+- `templates/agent_rules/git_publish_safety.md` for adopter-side publish safety templates.
 
 Preflight strategy:
 - Use a default-deny `.gitignore`.
@@ -113,6 +130,12 @@ Likely cause:
 - The runtime change was treated as a script/config edit only.
 - The maintainer did not run a system-file synchronization check.
 - Live private rules were hidden by `.gitignore`, and only public templates or implementation files were considered.
+
+Related rules/docs:
+- `AGENTS.md` section `Agent System File Maintenance`.
+- `templates/agent_rules/rule_registry.md` for rule source maps and update expectations.
+- `templates/agent_rules/common_error_preflight.md` for known-error preflight handling.
+- `templates/agent_rules/hook_guardrails.md` when hooks, delivery, or automation behavior changes.
 
 Preflight strategy:
 - Before finishing an agent runtime change, identify affected live system files such as root rules, sub-agent entries, group context, machine-readable profiles, rule indexes, registries, runtime docs, and preflight docs.
@@ -141,6 +164,11 @@ Likely cause:
 - The delivery whitelist blocks connector attachment/cache paths to avoid leaking arbitrary local files.
 - The hook does not stage verified deliverables from the cache into the routed output directory before sending.
 
+Related rules/docs:
+- `templates/agent_rules/hook_guardrails.md` for artifact delivery hook expectations.
+- `templates/agent_rules/external_actions.md` for user-facing file delivery.
+- `templates/agent_rules/workspace_io.md` for output directory and temporary file handling.
+
 Preflight strategy:
 - Treat local file creation as incomplete until the file upload/send API returns success.
 - Save final deliverables directly under the current routed output directory when possible.
@@ -167,6 +195,10 @@ Likely cause:
 - The input is too large and increases scheduling pressure.
 - The connector retries the same request on the same model without reducing input.
 
+Related rules/docs:
+- `templates/agent_rules/context_budget.md` for reducing model input before retry.
+- `templates/agent_rules/hook_guardrails.md` when connector retries or fallback routing are implemented in hooks.
+
 Preflight strategy:
 - Keep a private connector config with a primary model and a capacity fallback model.
 - For capacity errors, retry the primary model at most once, then switch to the fallback.
@@ -190,6 +222,11 @@ Likely cause:
 - The connector sends full group history, attachment text, or transcripts in one model request.
 - `chat_history.md`, long-term context, or tool output is loaded as a whole file.
 
+Related rules/docs:
+- `templates/agent_rules/context_budget.md` for resident context and compression budgets.
+- `templates/agent_rules/memory_context.md` for long-term context and message indexes.
+- `templates/agent_rules/request_intake.md` for narrowing vague or broad requests.
+
 Preflight strategy:
 - Default to the current message and one direct quote only.
 - Search indexes and summaries first, then read only necessary source snippets.
@@ -199,6 +236,34 @@ Preflight strategy:
 Verification:
 - Test with nested quotes or long attachments and confirm the connector does not send the full chain.
 - Confirm retry requests are shorter, not identical.
+
+## Generic Issue: Multi-Line Chat Sends Are Truncated To The First Line
+
+Scenario:
+- An agent forwards a generated report, summary, topic list, or action list into a chat using a plain text send shortcut.
+
+Typical symptoms/errors:
+- The chat shows only the title or first line.
+- The send command returns success, but users report that the content is missing.
+- A readback API shows only the first line of the intended message.
+
+Likely cause:
+- The shell, wrapper command, or chat shortcut mishandled multiline text arguments.
+- The sender relied on the command exit code and did not verify the received message body.
+
+Related rules/docs:
+- `templates/agent_rules/external_actions.md` for external message delivery checks.
+- `templates/agent_rules/hook_guardrails.md` for outbound safety and delivery hooks.
+- `COMMON_ERRORS.md` entry `Long Or Non-ASCII Command Arguments Are Mangled`.
+
+Preflight strategy:
+- For multiline reports, prefer a structured rich-text/post payload or send each logical item as a single-line message.
+- Avoid passing long multiline text through uncertain shell arguments.
+- For operational syncs, include the actual content in the same delivery batch instead of sending a title first and content later.
+
+Verification:
+- After sending, fetch the sent message by message ID and confirm the body contains more than the title or first line.
+- If readback is truncated, immediately resend using single-line chunks or a verified structured payload.
 
 ## Generic Issue: Default Search Hits Template Directories
 
@@ -214,6 +279,11 @@ Likely cause:
 - `.gitignore` hides private runtime directories to prevent accidental commits.
 - `templates/` is allowlisted for GitHub and is easier to find.
 - Search did not explicitly include ignored private directories.
+
+Related rules/docs:
+- `AGENTS.md` sections `Template Boundary` and `File Search`.
+- `docs/architecture.md` for the distinction between framework templates and private runtime workspaces.
+- `README.md` sections `Repository Contents` and `Not Included`.
 
 Preflight strategy:
 - Keep `.gitignore` default-deny.
@@ -241,6 +311,11 @@ Likely cause:
 - The caller did not distinguish template maintenance from runtime operation.
 - The template file name matched the live file name.
 
+Related rules/docs:
+- `AGENTS.md` sections `Template Boundary` and `File Search`.
+- `SUBAGENTS.md` for the reusable template index, not live runtime routing.
+- `docs/architecture.md` for template, sub-agent, and data-layer boundaries.
+
 Preflight strategy:
 - Treat every path containing `templates/` as non-runtime unless the task is template maintenance, framework publishing, or scaffold generation.
 - For live runtime tasks, first locate the private workspace root, then search that explicit root with ignored files included if needed.
@@ -267,6 +342,11 @@ Likely cause:
 - The event failed in the connector layer, hook layer, or session index layer before entering model context.
 - The model can only follow rules it sees; it cannot handle an event that was blocked before the model call.
 
+Related rules/docs:
+- `templates/agent_rules/hook_guardrails.md` for inbound routing and pre-model connector error hooks.
+- `templates/agent_rules/rule_registry.md` when hook behavior needs a rule-map update.
+- `COMMON_ERRORS.md` entry `Agent Runtime Changes Are Not Reflected In System Files`.
+
 Preflight strategy:
 - Use separate hooks or read-only checks for inbound messages, connector errors, and session recovery.
 - Model rules govern behavior after events enter the model. Pre-model failures need logs, error hooks, repair scripts, and monitoring.
@@ -277,6 +357,38 @@ Verification:
 - Simulate or review one pre-model error and confirm monitoring detects it.
 - Confirm repaired messages enter the correct personal or group long-term thread.
 - Confirm read-only governance checks do not restart services, modify config, or rewrite session indexes.
+
+## Generic Issue: Cross-Chat Sync Sends Only A Title Or Empty Body
+
+Scenario:
+- A source chat receives audio, meeting notes, daily reports, summaries, or review material, and a rule says some derived content may be synced to another chat.
+
+Typical symptoms/errors:
+- The target chat receives only a title such as a redacted topic-sync heading, with no body.
+- The source chat says the sync is done, but the target chat has no usable content.
+- Users ask why the topic was sent without details or why the target chat cannot see the content.
+
+Likely cause:
+- The workflow treated source material presence as the sync trigger instead of first checking whether there are eligible derived items.
+- A title/template was sent before the actual redacted body was generated.
+- The send path truncated or dropped multiline text, and no service-side readback check was performed.
+
+Related rules/docs:
+- `templates/agent_rules/external_actions.md` for external-message confirmation and delivery.
+- `templates/agent_rules/identity_access.md` for group membership and private-query boundaries.
+- `templates/agent_rules/memory_context.md` for what may be retained or summarized.
+- `COMMON_ERRORS.md` entry `Multi-Line Chat Sends Are Truncated To The First Line`.
+
+Preflight strategy:
+- Separate source processing from target sync: first summarize the source material, then decide whether any target-appropriate, redacted, concrete items exist.
+- If no eligible item exists, skip target sync entirely; do not send a placeholder title or empty table.
+- If eligible items exist, generate the full target-sync body before sending, and require at least one concrete item in the body.
+- Prefer a send path that preserves multiline text, then read back the service-side message body. If readback is empty, title-only, truncated, or mismatched, resend as plain text or an attachment.
+
+Verification:
+- Test one source item with no eligible target content and confirm no target-chat message is sent.
+- Test one source item with eligible target content and confirm the target-chat readback includes the concrete body, not only the title.
+- Confirm source-chat status never says "synced" unless target readback succeeded.
 
 ## Generic Issue: Windows PowerShell 5.1 Misparses UTF-8 Without BOM Source Containing Non-ASCII Text
 
@@ -291,6 +403,11 @@ Typical symptoms/errors:
 Likely cause:
 - Windows PowerShell 5.1 may not reliably detect UTF-8 without BOM source and may parse it with the system ANSI code page.
 - Strict JSON/TOML config often needs UTF-8 without BOM, but `.ps1` source compatibility is a separate issue.
+
+Related rules/docs:
+- `templates/agent_rules/workspace_io.md` for encoding and script-edit expectations.
+- `COMMON_ERRORS.md` entry `UTF-8 BOM Breaks Strict Parsers` for the separate strict-config case.
+- `COMMON_ERRORS.md` entry `Long Or Non-ASCII Command Arguments Are Mangled` when the issue is argument transport rather than source parsing.
 
 Preflight strategy:
 - For scripts that must run in Windows PowerShell 5.1, keep source ASCII when practical.

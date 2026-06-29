@@ -2,6 +2,8 @@
 
 This file indexes the reusable sub-agent templates. All listed content is redacted and contains no real organization, people, customer, conversation, asset, or business data.
 
+Template sub-agents inherit the root `AGENTS.md` rules, including default work discipline: surface costly assumptions, keep changes small, avoid drive-by refactors, and verify non-trivial work. Do not duplicate long behavior guidelines in every template unless a sub-agent needs a stricter local rule.
+
 ## Generic Sub-Agent
 
 - Entry point: `templates/subagent/SUB_AGENT.md`

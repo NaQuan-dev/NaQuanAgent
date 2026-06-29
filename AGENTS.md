@@ -10,6 +10,13 @@ This repository is a reusable Agent framework, not a live organization workspace
 - Do not guess real business facts, user identities, customer information, permissions, or live system state.
 - Before known high-risk tasks, read the relevant `COMMON_ERRORS.md` entries and apply the preflight strategy. Do not wait until a recorded mistake happens again before using the known correct path.
 
+## Default Work Discipline
+
+- For non-trivial or ambiguous work, surface material assumptions, tradeoffs, and simpler options before acting; ask when a wrong assumption would be costly or unsafe.
+- Prefer the smallest change that satisfies the request. Do not add speculative features, unnecessary abstractions, broad rewrites, or drive-by refactors.
+- Every edited line should trace back to the requested outcome. Clean up only unused code created by the current change unless the user asks for broader cleanup.
+- Define a concrete success check for implementation work, run the relevant verification when available, and state any unverified scope or test gap.
+
 ## Repository Boundary
 
 Only commit:
