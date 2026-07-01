@@ -27,6 +27,8 @@ This framework uses a "small resident rules, detailed rules on demand" structure
 
 ## Sub-Agent Layer
 
+`templates/SUBAGENTS.md` indexes reusable sub-agent templates. It is a template directory file, not live runtime routing.
+
 `templates/subagent/` is for projects, groups, departments, or business domains:
 
 - `SUB_AGENT.md`: minimal resident rules for the sub-agent.

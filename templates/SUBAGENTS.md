@@ -1,4 +1,4 @@
-# Subagent Templates
+# Subagent Template Index
 
 This file indexes the reusable sub-agent templates. All listed content is redacted and contains no real organization, people, customer, conversation, asset, or business data.
 

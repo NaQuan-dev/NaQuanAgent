@@ -15,9 +15,9 @@ This repository provides a reusable local Agent workspace framework. It stores o
 ```text
 AGENTS.md                  # Maintenance rules for this framework repository
 COMMON_ERRORS.md           # Generic common-error playbook
-SUBAGENTS.md               # Sub-agent template index
 docs/                      # Architecture and publishing safety docs
 templates/AGENTS.md        # Root rules template for a real workspace
+templates/SUBAGENTS.md     # Sub-agent template index
 templates/agent_rules/     # On-demand rule templates
 templates/memory_review/   # Weekly memory review and common-error candidate templates
 templates/subagent/        # Generic sub-agent template
