@@ -25,9 +25,14 @@ The group view and user view must be regenerable from the same relationship deta
 
 ## Permission Boundaries
 
+- policy_anchor: `group_chat_isolation_active`
+- policy_anchor: `conversation_context_isolation`
 - Ordinary users may view and update only their own non-identity preferences.
 - Administrators are required for role, status, stable identity key, or other-user record changes.
 - Cross-project, cross-group, or cross-department data access requires both user permission and task necessity.
+- Group workspaces are runtime context boundaries, not operating-system ACLs. Local filesystem readability is not authorization to read another group.
+- If the current connector session is not routed to a group, do not read that group's chat history, files, workspace, archives, tasks, or outputs.
+- Background workers must preserve the same route, identity, and permission boundary as the original message.
 
 ## Private Query Over Group Messages
 
@@ -40,3 +45,9 @@ When a user asks privately about group messages, perform these checks first:
 - Before output, filter again by `user_id`, group scope, and private-query permission.
 
 Do not reveal group messages, full member lists, raw platform identifiers, attachment contents, customer private data, or other sensitive context to users who are not active authorized members. If membership is missing, stale, or conflicting, verify access first. If access cannot be verified, refuse the read.
+
+## Group Sub-Agent Inheritance
+
+- Each registered group should have a `SUB_AGENT.md`, `group_context.md`, and optional `agent_profile.json`.
+- A group sub-agent inherits the global `AGENTS.md`, organization facts, and organization-level rules, then applies its own group rules and memory.
+- A private user chat shares the global Agent but uses the user's own private context. Do not merge private user context into group context unless explicitly authorized and task-relevant.

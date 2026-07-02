@@ -6,6 +6,8 @@ This rule covers audio/video files that are uploaded by an agent to generate mee
 
 Generated minutes are temporary processing artifacts. The durable archive is the requester's private employee workspace.
 
+Audio, video, transcripts, and generated minutes never imply business-system or CRM matching. Treat them as transcription, summary, or archive inputs unless the same conversation also contains a separate explicit text command and that conversation is an approved business-system entry point.
+
 Before any generated minutes object is deleted, the agent must verify that all durable outputs are saved locally:
 
 - Source audio/video file.
@@ -22,6 +24,7 @@ Do not infer ownership from:
 - Names mentioned in the recording.
 - The latest unrelated speaker in a group chat.
 - Nicknames or display names without identity verification.
+- Customer names, phone numbers, quotes, requirements, or other business clues mentioned in the recording.
 
 Prefer stable connector identity fields such as `<USER_ID>` or `<OPEN_ID>` and a trusted employee index.
 

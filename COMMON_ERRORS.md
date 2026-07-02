@@ -467,6 +467,47 @@ Verification:
 - Test one source item with eligible target content and confirm the target-chat readback includes the concrete body, not only the title.
 - Confirm source-chat status never says "synced" unless target readback succeeded.
 
+## Generic Issue: Audio Attachments Auto-Trigger Business-System Matching
+
+Scenario:
+- A chat connector receives a recording, voice message, audio/video file, transcript, or minutes item.
+- A hook or worker has a business-system intake path such as CRM customer matching, lead intake, or customer update.
+- A user sends a business-system command in a chat where that system is not allowed.
+
+Typical symptoms/errors:
+- A recording is treated as a customer-matching or business-system intake task even when the user only asked for transcription, minutes, or summary.
+- The chat receives an in-progress placeholder saying a business-system match is happening before the task is complete.
+- An unrelated workflow starts querying customer data because the transcript mentions a customer, phone, quote, requirement, or lead.
+- An authorized employee issues a customer-data command in the wrong group chat, and the hook treats identity as sufficient authorization.
+- A valid business-system user is blocked before the backend sees the request because a hook relies on local department names or hard-coded allowlists.
+
+Likely cause:
+- The hook treats message type `audio`, `voice`, media file extensions, or transcript availability as business intent.
+- The workflow merges "customer information summary" with "business-system lookup/write".
+- The source chat, sender role, and explicit command are checked after the hook has already started the business-system operation.
+- Authorization checks only validate who is speaking, not where the command was sent.
+- Pre-backend hooks duplicate backend user-mapping logic and drift from the real account list.
+
+Related rules/docs:
+- `templates/agent_rules/hook_guardrails.md` for inbound hook gates.
+- `templates/agent_rules/external_actions.md` for not sending placeholder messages before completion.
+- `templates/agent_rules/voice_note_minutes_retention.md` for audio and minutes boundaries.
+
+Preflight strategy:
+- Treat audio or transcript presence as transcription/summarization intent only.
+- Require an approved conversation/source context before any business-system action. Identity alone is not enough.
+- Require a separate explicit text business-system command before matching, querying, or writing customer data.
+- For systems with their own account mapping, let the backend validate the current external identity and permissions.
+- Keep customer/business facts extracted from a summary separate from customer database operations.
+- Remove in-progress placeholder replies from hooks; send only completion, failure, or required-confirmation messages.
+
+Verification:
+- Test audio-only messages in ordinary and approved workflows and confirm the business-system hook skips them.
+- Test an explicit business-system command in a disallowed group from an otherwise authorized user and confirm the hook skips it before any data access.
+- Test an authorized workflow with an explicit text business-system command and confirm it still works.
+- Test a valid backend-mapped user whose local department is not the old allowlisted department and confirm the request reaches backend authorization.
+- Confirm no placeholder reply is sent before completion or actionable failure.
+
 ## Generic Issue: Windows PowerShell 5.1 Misparses UTF-8 Without BOM Source Containing Non-ASCII Text
 
 Scenario:

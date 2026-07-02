@@ -9,6 +9,7 @@ This file defines guardrails that must be enforced by hooks or read-only monitor
 - Before writing session indexes or connector state, create a backup and prefer dry-run support.
 - Hooks must not show local paths, user IDs, group IDs, session keys, log paths, or stack traces to ordinary users.
 - Hooks handle routing, archiving, delivery, safety checks, and status recording. They do not replace business approvals, customer commitments, quote confirmation, or formal knowledge publication.
+- Hooks must not send placeholder replies such as "processing", "received", `task_id`, or "please wait" unless the user must take action before work can continue.
 
 ## 1. Inbound Routing Hook
 
@@ -25,6 +26,7 @@ Fallbacks:
 - If the route snapshot is missing, stale, or inconsistent, resolve it again.
 - If reliable routing still fails, treat the request as personal/unregistered and do not read group-private data.
 - Do not route a group message based on a window title, old thread title, or administrator debug context.
+- If a group route cannot be verified, do not read group-private context.
 
 ## 2. Pre-Model Connector Error Hook
 
@@ -56,6 +58,7 @@ Goals:
 - Block local paths, internal directories, debug logs, session keys, unredacted IDs, tokens, secrets, and malformed links.
 - Distinguish current-session bot sends, human-account sends, group sends, direct-message sends, and file/image delivery.
 - Prevent user-requested artifacts from being sent to an administrator account by default.
+- Verify links or multiline bodies after send when possible. If the service-side message contains only a title, empty body, or first line, retry with plain text or attachment before claiming completion.
 
 ## 4. Artifact Delivery Hook
 
@@ -66,6 +69,18 @@ Goals:
 - An artifact is complete only after it is delivered to the original requester or an approved destination.
 - Images, files, spreadsheets, documents, and archives must not remain only in local storage.
 - If the route or destination is unclear, do not send to an administrator by default. Stop and ask for confirmation.
+
+## 4a. Business-System Intake Gate
+
+Trigger: inbound messages or files that might be interpreted as business-system or CRM work.
+
+Goals:
+
+- Treat audio, video, transcripts, and meeting notes as transcription/summarization input only.
+- Require an allowed conversation/source context before any business-system read or write.
+- Require a separate explicit text command before matching, querying, creating, or updating business-system records.
+- Let the backend business system validate account mapping and permissions. Local department labels or hard-coded names must not replace backend authorization.
+- In disallowed conversations, skip the business-system hook before any data access and continue with ordinary summary/minutes behavior when appropriate.
 
 ## 5. Memory Write Guard
 
