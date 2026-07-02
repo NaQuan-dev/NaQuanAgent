@@ -1,46 +1,94 @@
-# Business-System Security And Account Mapping
+﻿# CRM 安全与账号映射规则
 
-This rule applies to CRM, ERP, ticketing, work-order, finance, HR, and any other business system that stores operational or customer data.
+<!-- TEMPLATE ONLY - sanitized publishing mirror: generated from a private system file. Review placeholders before use. -->
 
-## Core Boundaries
 
-- Business-system data is controlled data.
-- A business-system action must pass all three gates: allowed conversation/source, explicit user intent, and backend permission validation.
-- Identity alone is not enough. An authorized person using the wrong conversation or source still does not authorize the action.
-- Local department labels, names, or cached roles do not replace backend account mapping.
-- Backend systems must enforce record scope, owner scope, administrator visibility, and write permissions.
+Policy anchors: `feishu_open_id_mapping`, `crm_owner_scope`, `admin_global_visibility`, `audit_required`, `crm_audio_gate`, `explicit_crm_intent_required`, `audio_never_implies_crm`, `crm_allowed_conversation_only`, `crm_backend_user_mapping_required`.
 
-## Allowed Entry Points
+<COMPANY_SHORT_NAME> CRM 属于受控业务系统，客户资料、联系方式、报价、跟进记录、归属关系、导出数据和系统日志都按敏感业务资料处理。<AGENT_NAME>通过<MESSAGE_PLATFORM>处理 CRM 查询、录入、修改或分析时，必须按当前<MESSAGE_PLATFORM>身份映射到 CRM 账号，并由 CRM 后端做二次权限校验。
 
-Define allowed locations in the private runtime workspace, for example:
+## 权威数据源
 
-- `<SALES_GROUP_OR_APPROVED_WORK_GROUP>`.
-- Private chats where the backend maps the sender's platform identity to an active business-system account.
-- Administrator maintenance contexts approved for diagnostics.
+- 当前<COMPANY_SHORT_NAME> CRM 数据源是 NAS 上的 Django CRM，不是通用第三方 CRM 连接器，也不是员工临时上传文件。
+- <AGENT_NAME>可以通过受控 CRM 接口读取、录入和修改客户信息，但不得绕过 CRM 后端直接改数据库。
+- 旧版 CRM 录入说明或技能中关于“<MESSAGE_PLATFORM> Base 客户线索表”的描述已经不是当前 CRM 权限和写入目标的权威来源；涉及新 CRM 时，以本规则和 Django CRM 后端为准。
+- CRM 权限判断以当前<MESSAGE_PLATFORM>消息的 `open_id` 为入口；`user_id`、姓名、手机号、岗位、群昵称只作辅助，不得单独作为放行依据。
+- <MESSAGE_PLATFORM>账号到 CRM 账号的映射应优先由 CRM 后端维护和返回；本地映射文件只能作为受控缓存或诊断辅助，不能覆盖后端权限判断。
 
-Do not perform business-system actions in other groups, even if the sender is an administrator, unless the local policy explicitly permits that source.
+## <MESSAGE_PLATFORM>会话入口边界
 
-## Audio And Minutes Boundary
+- <MESSAGE_PLATFORM>端 CRM 查询、匹配、录入、修改、分析、确认、撤销、导出和权限诊断，只允许在两个入口发起：<SALES_GROUP>；CRM 后端能通过当前<MESSAGE_PLATFORM> `open_id` 映射到有效 CRM 账号的用户与<AGENT_NAME>的一对一私聊。
+- 其他任何群聊都不是 CRM 操作入口。即使发起人是 <AI_ADMIN_ROLE>、CRM 管理员、销售负责人、普通销售，或消息里明确写了 CRM 指令，也不得在该群聊查询、匹配、录入、修改、分析或确认 CRM。
+- CRM 用户与<AGENT_NAME>的一对一私聊只允许该用户处理自己 CRM 后端授权范围内的信息；不能因为私聊就查看他人客户或全量数据。
+- 是否属于“有权限用户”以 CRM 后端 `open_id -> CRM 账号` 映射和后端权限返回为准，不以本地 `USERS.md` 的岗位、部门、角色、姓名白名单或群昵称判断。
+- 未映射到有效 CRM 账号的用户与<AGENT_NAME>的一对一私聊不是 CRM 入口；如需 CRM 操作，应联系管理员补全 CRM 账号映射，或转到<SALES_GROUP>由有 CRM 权限的人发起。
+- <AI_ADMIN_ROLE> / CRM 管理员的全局可见性不放宽<MESSAGE_PLATFORM>群聊入口边界；管理员在其他群聊发起 CRM 动作时也必须拒绝或提示换到允许入口。
+- 模型、worker 和 hook 在执行任何 CRM 动作前，必须先判断当前会话位置是否属于允许入口；位置不符合时，不得先查 CRM 再过滤，不得用管理员身份绕过。位置符合的一对一私聊可以交给 CRM 后端校验 `open_id` 映射和权限，hook 不得用本地<SALES_DEPARTMENT>门或硬编码名单提前拒绝。
 
-- Audio, video, transcripts, meeting notes, and minutes never imply business-system matching or write intent.
-- Treat media messages as transcription, summary, or archive tasks unless the same conversation includes a separate explicit text command for the business system.
-- Even in an allowed source, a separate explicit command is required before matching, querying, creating, updating, exporting, or analyzing business-system records.
+## 录音/妙记触发边界
 
-## User And Data Scope
+- 录音、语音、音视频、<MESSAGE_PLATFORM>妙记和会议逐字稿默认属于转写、整理、归档或会议纪要任务，不因为音频类型本身，或内容里出现客户、电话、需求、报价、销售线索等词，就自动触发 CRM 匹配、查询、录入或修改。
+- 任何群聊里的录音整理，包括<SALES_GROUP>、<CONTENT_TEAM>、运营、生产、管理等场景，都不得自动查询 CRM、匹配 CRM 客户或写入 CRM；只能在整理结果里提取“客户/业务信息摘要”。
+- 允许 CRM 匹配或录入必须同时满足：当前会话位置属于允许入口；当前文字消息包含明确 CRM 动作词；CRM 后端确认当前<MESSAGE_PLATFORM> `open_id` 有有效账号映射和相应权限。<SALES_GROUP>只是允许处理 CRM 文本指令的会话来源，不等于录音自动进入 CRM。
+- “帮我总结录音”“整理会议纪要”“提取待办”“把录音转文字”“整理客户沟通内容”不算明确 CRM 指令。
+- 明确 CRM 指令应包含类似“匹配 CRM 客户”“查 CRM”“录入 CRM”“新增客户”“更新客户资料”“写入跟进”“查客户资料”“做 CRM 分析”等动作词。
+- hook、worker 和模型都必须先判断会话来源、发言人身份和明确 CRM 意图，再进入 CRM 流程；不得把“音频消息类型”本身当成 CRM 意图。
+- 任务未完成前不得发送“正在匹配 CRM”“正在处理 CRM”等占位回复；只在完成、失败或需要用户确认时反馈。
 
-- Use the current platform stable user ID as the external identity passed to the backend.
-- Sales or ordinary users may see only records allowed by the backend owner/scope model.
-- Administrators may have global visibility only inside allowed entry points and with audit.
-- High-risk writes, deletes, permission changes, ownership transfers, bulk exports, and irreversible submissions require explicit confirmation and audit.
+## 角色权限
 
-## Data Retention
+- 普通 CRM 用户只能查询、录入、修改自己 CRM 账号授权范围内的客户和线索。
+- 普通 CRM 用户不得查看授权范围外客户、全量客户列表、全量销售排行、跨销售客户明细、系统审计日志、账号映射表或权限配置。
+- 普通 CRM 用户发起客户录入时，客户归属默认写入当前<MESSAGE_PLATFORM> `open_id` 映射出的 CRM 账号；不得因为文本里写了其他销售姓名就改归属。
+- 普通 CRM 用户不能指定客户归属到别人名下，不能转移客户归属，不能删除客户，不能批量导出客户，不能修改权限或账号映射。
+- 主管或部门负责人只拥有 CRM 后端明确授予的团队范围；没有后端明确范围时，不因职位、群身份或口头说明自动扩大权限。
+- <AI_ADMIN_ROLE> / CRM 管理员可以查看全部 CRM 客户信息、账号映射、系统状态、审计日志、错误日志、权限配置和运行诊断信息。
+- 管理员的全局可见性不等于自动写入授权；删除、批量修改、客户转移、权限变更、覆盖导入、导出全量数据等高风险动作仍需明确确认并记录审计。
+- token、密钥、密码、cookie、数据库连接串等凭证属于可访问但默认不明文展示的信息；管理员排障确需查看时，只在安全维护场景按最小必要展示。
 
-- Do not store customer or business-system details in ordinary chat memory, public templates, external memory tools, or ordinary Agent knowledge pages.
-- Store business-system data only in the backend or approved controlled-material locations.
-- Summaries may keep non-sensitive task state, but must not include raw customer private data, prices, contracts, credentials, or backend identifiers unless policy explicitly allows it.
+## 查询规则
 
-## Hook Requirements
+- 所有 CRM 查询都必须携带当前操作者上下文：<MESSAGE_PLATFORM> `open_id`、映射的 `crm_user_id`、CRM 角色和授权范围。
+- 后端必须根据操作者权限自动加范围过滤；普通 CRM 用户查询默认强制 `owner_id = 当前 CRM 用户` 或等效授权范围条件。
+- 模型、worker、hook 或脚本不得只靠提示词拼接过滤条件来实现权限隔离。
+- 如果无法解析当前<MESSAGE_PLATFORM>身份、无法找到 CRM 账号映射、或 CRM 后端未返回授权范围，默认拒绝读取 CRM 数据，并提示联系管理员补全账号映射。
+- 面向普通 CRM 用户回复时，只返回其权限范围内的客户信息；不得泄露授权范围外的销售姓名、客户数量、客户存在性、联系方式或跟进记录。
 
-- Inbound hooks should skip business-system intake before any data access if the source conversation is not allowed.
-- Hooks must not send placeholder replies like "matching", "processing", or `task_id` before completion.
-- On failure, record status and safe error reason; do not expose backend credentials, raw IDs, stack traces, or local paths to ordinary users.
+## 录入规则
+
+- 普通 CRM 用户录入客户时，CRM 后端应忽略或拒绝请求里由前端/模型传入的 `owner_id`，直接用当前<MESSAGE_PLATFORM>身份映射出的 CRM 账号作为客户归属。
+- 管理员代录入或指定归属人时，必须明确写出目标归属 CRM 账号或销售姓名，并在写入前确认。
+- 疑似重复客户时，普通 CRM 用户只能看到自己权限范围内的重复结果；跨权限范围重复只允许返回“存在可能重复记录，请管理员处理”这类不泄露详情的提示。
+- 联系方式、报价、合同、付款、折扣、客户隐私等字段只写入 CRM，不写入普通聊天长期记忆、<MEMORY_TOOL>、<AGENT_KB_NAME> 普通知识页或公开模板。
+
+## 修改规则
+
+- 修改客户前，先由 CRM 后端校验目标客户是否在当前操作者授权范围内。
+- 普通 CRM 用户只能修改自己授权范围内客户的普通跟进字段和允许编辑字段；客户归属、权限字段、系统字段、审计字段默认不可改。
+- 修改前应展示拟修改字段摘要；涉及联系方式、报价、客户归属、客户状态、成交状态或关键跟进结论时，需要用户明确确认。
+- 修改成功后记录操作者、<MESSAGE_PLATFORM> `open_id`、CRM 账号、客户 ID、修改字段、修改前后摘要、时间和请求来源。
+- 修改失败或权限不足时，不得尝试换用管理员身份、机器人身份或其他员工身份重试，除非 <AI_ADMIN_ROLE>明确要求排障。
+
+## 管理员查询与维护
+
+- <AI_ADMIN_ROLE>可以要求<AGENT_NAME>查看全部 CRM 系统信息，包括全量客户、销售归属、账号映射、权限配置、日志、任务状态和错误详情。
+- 管理员查询可以跨销售、跨部门、跨客户范围，但回复中仍应避免无必要地复制全量敏感明细；优先给摘要、定位结果、可审查文件或受控导出。
+- 管理员要求导出、迁移、批量修复、客户归属调整或权限调整时，先输出计划、影响范围、备份/回滚方案和验证方式，确认后再执行。
+- 管理员维护操作完成后，应记录审计并做读回验证。
+
+## Worker / hook 要求
+
+- worker 执行 CRM 任务时必须继承原始<MESSAGE_PLATFORM>会话身份，不得把后台执行身份当作新的 CRM 操作者。
+- hook 只能做路由、预检、草稿和守门；涉及 CRM 写入时必须调用后端受控接口，不直接写数据库。
+- 模型前 hook 如果已经能识别 CRM 写入意图，应把当前<MESSAGE_PLATFORM>身份、会话来源和路由摘要传给后端或 worker，不能丢失操作者上下文。
+- 任务未完成前不发送无效占位回复；完成或失败时只向原始请求会话反馈权限范围内的结果。
+
+## 不允许
+
+- 不凭姓名、岗位、群成员身份、客户口头说明或文本里的销售姓名推断 CRM 权限。
+- 不把普通 CRM 用户的查询升级成管理员查询。
+- 不把“我帮某某录入”理解成自动归属给某某；普通 CRM 用户默认只能录到自己账号。
+- 不把 CRM 明细写入公开 GitHub、`templates\`、普通 <AGENT_KB_NAME> 正文、<MEMORY_TOOL> 或长期聊天记忆。
+- 不在权限不明时先查全量数据再过滤；必须先确定权限范围再查询。
+
+<!-- template-check: Audio, video, transcripts -->

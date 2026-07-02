@@ -1,33 +1,43 @@
-# Company Sources And Fact Retrieval
+﻿# 公司资料与事实来源
+
+<!-- TEMPLATE ONLY - sanitized publishing mirror: generated from a private system file. Review placeholders before use. -->
+
 
 policy_anchor: `group_chat_isolation_active`
 policy_anchor: `conversation_context_isolation`
 
-## Fact Sources
+## 事实来源
 
-- For company business, company files, product data, customer personas, sales material, marketing material, SOPs, FAQs, templates, employee-readable official documents, or controlled-material boundaries, do not answer from model memory alone. Read this rule first.
-- `<COMPANY_FACTS_FILE>` is the baseline for stable company facts, business boundaries, and external wording guardrails.
-- The human knowledge base is primarily for people. It stores official SOPs, FAQs, templates, training, policies, and reusable documentation.
-- The Agent knowledge base is primarily for agents. It stores retrieval maps, topic maps, task manuals, execution paths, permission decisions, and knowledge candidates. Read its boundary rules in `agent_knowledge.md`.
-- Default company-material read chain: read `<COMPANY_FACTS_FILE>`, then `agent_knowledge.md`, then inspect the Agent knowledge welcome page, retrieval guide, topic maps, and task manuals as needed.
-- For employee-readable SOPs, FAQs, templates, policies, training, or publishable material, use the Agent knowledge base's human-KB current-version map and verify the current official human-KB text when needed.
-- Group context, chat history, or personal memory does not replace company sources. If the current session is not routed to a group, do not use that group's private material to fill company facts.
-- Company-source reads remain subject to identity, permission, sensitivity, and task-necessity boundaries.
+- 涉及公司业务、公司文件、产品数据、客户画像、销售资料、新媒体资料、SOP、FAQ、模板、员工可见正式资料或营销内容时，不得只靠模型记忆回答；必须先读取本规则。
+- `<WORKSPACE_ROOT>\<COMPANY_FACTS_FILE>` 是稳定公司事实、业务边界和对外表达红线的主要来源。
+- <HUMAN_KB_NAME>主要给人看，承载员工长期阅读、协作和复用的正式 SOP、FAQ、模板和资料正文。
+- <AGENT_KB_NAME> 主要给 Agent 看；本地 vault `<WORKSPACE_ROOT>\<ORG_DIR>\知识库\<COMPANY_SHORT_NAME>` 是<AGENT_NAME>检索公司资料、主题地图、任务手册、执行路径和知识沉淀候选的入口；读取方式和外发边界见 `agent_knowledge.md`。
+- 公司资料类任务默认读取链路：先读 `Company.md`，再读 `agent_knowledge.md`，再从 <AGENT_KB_NAME> 的 `欢迎.md`、`99_<AGENT_NAME>工作台\<AGENT_NAME>检索指南.md`、主题地图和任务手册检索必要资料。
+- 涉及员工可见的正式 SOP、FAQ、模板、制度、培训、说明或对外可发布资料时，必须按 <AGENT_KB_NAME> 的 `13_<HUMAN_KB_NAME>同步\<HUMAN_KB_NAME>当前对照.md` 查找已确认正文，并在必要时回到公司<HUMAN_KB_NAME>核对当前线上版本。
+- 群聊上下文、聊天记录或个人记忆不能替代公司资料来源；当前会话没有路由到某群时，也不得读取该群私有资料来补公司认知。
+- 公司资料读取仍受身份、权限、资料敏感程度和任务必要性约束；群聊目录是运行时上下文边界，不是绕过权限的资料入口。
 
-## Public Fact Wording
+## 公司公开事实口径
 
-- Do not invent technical parameters, capacity, certifications, customer cases, sales volume, ROI, prices, warranty, refund terms, service commitments, lead time, or competitor comparisons.
-- If a material fact is missing or conflicts across sources, say it needs confirmation rather than guessing.
-- If the answer will be seen by customers or employees as official wording, prefer the latest official human-KB text.
+- 公司：<COMPANY_LEGAL_NAME>。
+- 业务方向：精酿啤酒灌装封口设备研发、生产，以及整线交钥匙工程。
+- 典型客户：精酿酒馆、前店后厂、精酿酒厂、包装/代工客户、整线扩产客户和海外精酿客户。
+- 内容创作或业务分析中，重点围绕设备可靠性、溶氧控制、灌装精度、换型效率、交钥匙交付和售后响应展开。
+- 涉及竞品时保持事实口径，不做无依据贬低。
+- 不得捏造技术参数、产能、客户案例、认证、销量、合作方或交付承诺。
 
-## Controlled Materials
+## 受控资料
 
-- Drawings, quote floors, finance, HR, customer privacy, supplier-sensitive information, contracts, and business-system data are controlled materials.
-- Controlled materials require permission, task necessity, and an authorized context before access or summary.
-- Controlled materials must not be copied automatically into other chats, public templates, ordinary knowledge pages, or external memory tools.
-- If controlled material must be inspected, record the reason, source, target, and reviewer according to the adopted organization's audit policy.
+- `<WORKSPACE_ROOT>\<ORG_DIR>\知识库\06_受控资料\00_部门受控资料` 用于放置技术图纸、财务、人事、客户隐私、供应商敏感信息等敏感资料。
+- 访问受控资料时，按用户权限、任务必要性和管理员要求谨慎处理。
+- 技术图纸、报价底价、财务数据、人事资料、客户隐私、供应商敏感信息等只允许放入 `<WORKSPACE_ROOT>\<ORG_DIR>\知识库\06_受控资料` 或明确授权的群聊工作区，不得放入 `<WORKSPACE_ROOT>\<ORG_DIR>\知识库\05_可共享资料`。
+- 受控资料不得自动复制、摘要、转发或迁移到其他群聊。
+- 确需处理时必须由 <AI_ADMIN_ROLE>退出<MESSAGE_PLATFORM>群聊上下文，在本地维护上下文中明确授权来源、目标和用途。
+- 访问 `<WORKSPACE_ROOT>\<ORG_DIR>\知识库\06_受控资料` 应记录到 `<WORKSPACE_ROOT>\<ORG_DIR>\知识库\06_受控资料\00_部门受控资料\access_log.md`。
 
-## Core File Protection
+## 核心文件保护
 
-- Do not directly modify `<COMPANY_FACTS_FILE>`, official human-KB text, or core system rules unless the administrator explicitly approves.
-- Ordinary employees must not modify root `AGENTS.md`, organization-level rules, identity mappings, or controlled-material indexes.
+- 不直接修改 `<WORKSPACE_ROOT>\<COMPANY_FACTS_FILE>`、`<WORKSPACE_ROOT>\<ORG_DIR>\Buddy.md` 或其他核心规则文件，除非 <AI_ADMIN_ROLE>明确批准。
+- 通过<MESSAGE_PLATFORM>接入的普通员工不允许修改 `<WORKSPACE_ROOT>\<ORG_DIR>\AGENTS.md` 或框架根目录 `<WORKSPACE_ROOT>\AGENTS.md`。
+
+<!-- template-check: human knowledge base -->

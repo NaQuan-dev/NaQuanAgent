@@ -1,84 +1,91 @@
-# Agent Knowledge Base Read Rules
+﻿# <AGENT_KB_NAME> 公司知识库读取规则
 
-This rule keeps the Agent stable when reading the Agent-facing knowledge base. The Agent knowledge base is for retrieval maps, cross-links, task manuals, execution paths, permission boundaries, and knowledge candidates. The human knowledge base is for official documents that employees read.
+<!-- TEMPLATE ONLY - sanitized publishing mirror: generated from a private system file. Review placeholders before use. -->
 
-## Entry Points
 
-- Agent knowledge base name: `<AGENT_KB_NAME>`.
-- Local or connected vault: `<AGENT_KB_PATH>`.
-- Optional CLI: `<AGENT_KB_CLI>`.
-- First-read pages: `<AGENT_KB_WELCOME>`, `<AGENT_RETRIEVAL_GUIDE>`.
-- Human-KB current-version map: `<HUMAN_KB_CURRENT_MAP>`.
-- Chat or experience intake overview: `<KNOWLEDGE_CANDIDATE_OVERVIEW>`.
-- Graph diagnostics candidate page: `<GRAPH_DIAGNOSTIC_CANDIDATES>`.
-- Agent dashboard or operations page: `<AGENT_DASHBOARD_PAGE>`.
+本规则用于让<AGENT_NAME>和各群聊子 Agent 在工作时稳定读取 <AGENT_KB_NAME> 版公司知识库。<AGENT_KB_NAME> 主要给 Agent 看，是本地 Agent 检索、交叉关联、任务手册、执行路径和沉淀候选入口；<HUMAN_KB_NAME>主要给人看，用于员工长期阅读、协作和复用的正式 SOP、FAQ、模板和资料正文。<AGENT_KB_NAME> 不是普通员工的交付渠道，也不是替代权限校验的公开资料库。
 
-## When To Read
+## 入口
 
-Read this rule, then the Agent knowledge base, for:
+- <AGENT_KB_NAME> vault 名称：`<COMPANY_SHORT_NAME>`。
+- 本地 vault：`<WORKSPACE_ROOT>\<ORG_DIR>\知识库\<COMPANY_SHORT_NAME>`。
+- <AGENT_KB_NAME> CLI：`D:\obsidian\<AGENT_KB_NAME>.com`。
+- 首读入口：`欢迎.md`、`99_<AGENT_NAME>工作台\<AGENT_NAME>检索指南.md`。
+- 线上<HUMAN_KB_NAME>对照：`13_<HUMAN_KB_NAME>同步\<HUMAN_KB_NAME>当前对照.md`。
+- 聊天沉淀入口：`99_<AGENT_NAME>工作台\聊天沉淀候选总览.md`。
+- <GRAPH_DIAGNOSTICS_TOOL> 诊断候选入口：`99_<AGENT_NAME>工作台\<GRAPH_DIAGNOSTICS_TOOL>关系诊断候选.md`。
+- Agent Dashboard 入口：`99_<AGENT_NAME>工作台\<AGENT_NAME> Agent Dashboard使用说明.md` 和本地插件 `xiaoquan-agent-dashboard`。
 
-- Any request to "check company files", "use company materials", "answer from the knowledge base", "find the manual", or "reference the docs".
-- Company introductions, product materials, sales materials, marketing materials, shared materials, and controlled-material boundaries.
-- SOPs, FAQs, templates, employee training, policy explanations, official directories, and publishable material.
-- Product selection, customer pain points, sales reception, delivery/support, content workflows, quote/contract/certificate boundaries.
-- Agent execution tasks such as document checks, cross-team sync, content intake, reporting, and meeting task extraction.
-- Deciding whether chat experience or employee feedback should become human-KB content, Agent knowledge, or company facts.
+## 什么时候读取
 
-## Recommended Read Order
+遇到以下任务时，先读取本规则，再按任务读取 <AGENT_KB_NAME>：
 
-Company-material tasks use this default read chain:
+- 任何需要“查公司文件”“看公司资料”“按公司资料回答”“参考知识库/资料库/手册”的任务。
+- 公司介绍、产品资料、销售资料、新媒体资料、共享资料、受控资料边界。
+- SOP、FAQ、模板、员工培训、制度说明、正式资料目录、对外可发布资料。
+- 产品选型、客户痛点、销售接待、交付售后、新媒体内容、报价/合同/证书/资料发送边界。
+- <AGENT_NAME>执行类任务：报价文件检查、销售纪要同步新媒体、新媒体选题入库、财务月报交付、管理会议任务单。
+- 需要判断某条聊天记录、群聊经验或员工反馈是否应沉淀到<HUMAN_KB_NAME>、<AGENT_KB_NAME> 或 `Company.md`。
 
-1. Read `<COMPANY_FACTS_FILE>` for stable facts, business boundaries, and external wording guardrails.
-2. Read Agent knowledge topic maps and task manuals for executable paths.
-3. If the answer references official employee-facing text, verify with the human-KB current-version map or current official human-KB text.
-4. If the task depends on the current group, read the current routed `group_context.md` and only the necessary task fragments.
-5. Do not use other groups' private chat history, files, or archives to supplement company facts.
+## 推荐读取顺序
 
-## Search Method
+公司资料类任务的默认读取链路：
 
-Prefer the adopted organization's Agent knowledge CLI or API when available:
+1. 先读 `Company.md`，取得稳定公司事实、业务边界和对外表达红线。
+2. 再查 <AGENT_KB_NAME> 的主题地图和任务手册，取得<AGENT_NAME>可执行路径。
+3. 如涉及员工可见的正式文档，以<HUMAN_KB_NAME>当前正文或 <AGENT_KB_NAME> 中的<MESSAGE_PLATFORM>对照页确认是否已有正式版本。
+4. 如涉及当前群聊的任务背景，再读当前群 `group_context.md` 和任务必要片段。
+5. 不用其他群聊的私有资料、聊天记录、文件或归档来补公司认知。
+
+## 检索方法
+
+优先使用 <AGENT_KB_NAME> CLI：
 
 ```powershell
-& '<AGENT_KB_CLI>' search query='<KEYWORD>' format=json
+& 'D:\obsidian\<AGENT_KB_NAME>.com' search query='<关键词>' format=json
 ```
 
-Useful search concepts:
+常用关键词：
 
-- Company: company profile, business boundary, capabilities, qualification, delivery process.
-- Product: product overview, product family, low-risk wording, technical boundary, compatibility.
-- Sales: sales process, personas, pain points, business system, quote, contract.
-- Content: brand voice, content workflow, expression boundaries, copy library, topic library.
-- Agent tasks: report generation, meeting task extraction, knowledge intake, document check.
-- Governance: sensitivity levels, controlled materials, shared-material use, human-KB current-version map.
-- Graph: relationship diagnostics, isolated nodes, rule conflicts, knowledge health.
+- 公司：公司档案、业务边界、核心能力、资质、交付流程。
+- 产品：产品总览、灌封设备系列、整线交付、低氧、换型、罐型、盖型。
+- 销售：<SALES_DEPARTMENT>标准流程、用户画像、痛点话术、CRM、报价、合同。
+- 新媒体：企业 IP、创始人人设、内容工作流、表达边界、文案库、选题库。
+- Agent 任务：销售纪要同步新媒体、报价文件检查、选题入库、财务月报、会议任务单。
+- 治理：资料分级、受控资料边界、共享资料使用规则、<HUMAN_KB_NAME>当前对照。
+- <GRAPH_DIAGNOSTICS_TOOL>：关系诊断、孤立节点、规则冲突候选、知识库健康检查。
+- Dashboard：Agent Dashboard、操作中心、<AGENT_NAME>工作台、状态面板、任务卡片、worker 状态。
 
-If the CLI is unavailable, read the vault Markdown directly. Direct reads must start from the retrieval guide; do not infer from filenames alone.
+如果 <AGENT_KB_NAME> CLI 不可用，可退回直接读取 vault 内 Markdown；直接读取时仍必须先看 `<AGENT_NAME>检索指南.md`，不要只按文件名猜结论。
 
-## Use Boundaries
+## 可用范围
 
-- Pages marked as internal/shareable and task-necessary can inform internal answers.
-- Controlled indexes can be used only to decide boundaries, authorization, and next confirmation steps. Do not expose controlled source content.
-- Prefer active and reviewed pages. Draft, candidate, review, or needs-review pages are not confirmed facts.
-- Task manuals guide the Agent's work; do not paste internal manuals verbatim to ordinary employees.
+- `sensitivity: internal`、`sensitivity: shareable` 且任务必要的内容，可用于<AGENT_NAME>内部判断和普通员工答复。
+- `sensitivity: controlled-index` 只可用于判断资料边界、授权要求和下一步确认动作，不得展开原件内容。
+- `agent_ready: true`、`status: active` 的页面优先；`review`、`candidate`、`draft`、`needs-review` 只能作为候选，不可当作确定事实。
+- 任务手册用于指导<AGENT_NAME>做事，不应原文发给普通员工；普通员工只需要结果、正文、清单或文件交付。
 
-## External Reply Boundary
+## 外发边界
 
-- Do not mention local vault paths, internal retrieval process, `.obsidian`, private directories, or debug details to ordinary users.
-- Reply with useful conclusions, wording, lists, drafts, or next actions.
-- A generated artifact is complete only when delivered to the requesting conversation or an approved destination. Existence in the knowledge base is not delivery.
-- Prices, contracts, customer information, finance, HR, drawings, certificate originals, system tokens, session IDs, and employee private information must not be sent directly from the Agent knowledge base.
+- 面向普通员工或客户回复时，不提 <AGENT_KB_NAME>、本地 vault、本地路径、`.obsidian`、工作区目录或内部检索过程。
+- 回答时只输出对用户有用的结论、话术、清单、正文或下一步动作。
+- 生成物的完成条件仍是发到原始<MESSAGE_PLATFORM>会话或明确授权的位置；<AGENT_KB_NAME> 中有文件不等于已交付。
+- 价格、合同、客户信息、财务、人事、图纸、证书原件、系统 token、会话 ID、员工个人信息不能从 <AGENT_KB_NAME> 直接外发。
 
-## Knowledge Intake
+## 知识沉淀规则
 
-- Stable company-level facts become candidates first; confirmed owners promote them to `<COMPANY_FACTS_FILE>`.
-- Employee-readable SOPs, FAQs, templates, and official materials should become human-KB drafts or official documents, then be indexed in the Agent knowledge base.
-- Agent execution paths, cross-team workflows, permission decisions, retrieval maps, and candidate notes belong in the Agent knowledge base.
-- If the same content is useful for both people and agents, create the human-readable document first, then add an Agent index or task note.
-- Graph diagnostics are candidates only. Confirm against source files before writing formal knowledge.
-- Raw chats, transcripts, customer privacy, employee privacy, quotes, contracts, paths, and debug logs do not belong in ordinary knowledge pages.
+- 稳定、已确认、公司级事实：先形成候选，再由 <AI_ADMIN_ROLE>或负责人确认后进入 `Company.md`。
+- 员工需要长期复用的 SOP、FAQ、模板、正式资料：优先整理到<HUMAN_KB_NAME>，并在 <AGENT_KB_NAME> 建对照或索引。
+- <AGENT_NAME>执行路径、跨群协作规则、权限判断、检索地图、候选沉淀：优先进入 <AGENT_KB_NAME>。
+- 同一条内容如果既要给人看又要给 Agent 用，先整理成人可读的<HUMAN_KB_NAME>草稿，再在 <AGENT_KB_NAME> 建索引、任务手册或执行提示。
+- <GRAPH_DIAGNOSTICS_TOOL> 自动输出只作为诊断候选；原始输出留在 `graphify-out/`，导出的 <AGENT_KB_NAME> Markdown 如需浏览应放在 `graphify-out/obsidian/` 作为独立临时 vault，不直接合并进主 vault。
+- <GRAPH_DIAGNOSTICS_TOOL> 发现必须回到源文件确认后，才能整理成 <AGENT_KB_NAME> 主库中的候选摘要、复核任务或正式结论。
+- 原始聊天、录音逐字稿、客户隐私、员工隐私、报价、合同、路径和调试日志不进入普通知识正文。
 
-## Conflict Handling
+## 冲突处理
 
-- If `<COMPANY_FACTS_FILE>` conflicts with Agent knowledge, use `<COMPANY_FACTS_FILE>` as the baseline and mark the Agent page for review.
-- If official human-KB text conflicts with an imported Agent page, verify through the human-KB current-version map.
-- If group context conflicts with company materials, do not turn group content into company fact. Mark it for confirmation.
+- `Company.md` 与 <AGENT_KB_NAME> 冲突时，先以 `Company.md` 为事实基线，并记录 <AGENT_KB_NAME> 待复核。
+- <HUMAN_KB_NAME>正式正文与 <AGENT_KB_NAME> 导入页冲突时，先检查 `<HUMAN_KB_NAME>当前对照.md`，必要时重新拉取<MESSAGE_PLATFORM>当前版本。
+- 群聊上下文与公司资料冲突时，不把群聊内容写成公司事实；先标记待确认。
+
+<!-- template-check: human-KB current-version map -->

@@ -1,25 +1,32 @@
-{
+﻿{
   "version": 1,
-  "updated_at": "<YYYY-MM-DD>",
-  "purpose": "Define the single source of truth, read timing, write boundary, and review requirement for agent rules and knowledge.",
+  "updated_at": "2026-07-02",
+  "purpose": "Define the single source of truth, read timing, write boundary, and review requirement for <ORG_DIR> agent rules and knowledge.",
   "principles": [
     "Read the registry first, then load only task-relevant rules.",
-    "Human knowledge base is primarily for people.",
-    "Agent knowledge base is primarily for agents.",
-    "Company facts file is the company fact baseline.",
+    "Feishu knowledge base is primarily for humans.",
+    "<AGENT_KB_NAME> is primarily for agents.",
+    "Company.md is the company fact baseline.",
+    "<GRAPH_DIAGNOSTICS_TOOL> is a diagnostic candidate layer, not an authoritative knowledge source.",
     "Known common errors are preflight inputs before risky actions.",
+    "CRM access is scoped by Feishu open_id to CRM backend account mapping; Feishu CRM actions are allowed only in Sales Work Group or private chats where the backend maps the sender to an active CRM account; admins have global visibility only inside allowed CRM entry points, while high-risk writes still require confirmation and audit.",
+    "Recordings, audio, video, and minutes never imply CRM matching; even Sales Work Group audio requires a separate explicit text CRM command before any CRM operation.",
+    "Engineering changes follow Karpathy-style assumption, simplicity, surgical-change, and verification discipline.",
+    "Local Codex project memories accelerate project handoff and continuation, but do not replace project files or <AGENT_KB_NAME> project maps.",
+    "Global <MEMORY_TOOL> common-error memories accelerate recall but do not replace COMMON_ERRORS.md or the machine-readable registry.",
     "Group and employee context files are local working memory, not official company fact sources.",
-    "Group and employee conversations are isolated by current route and identity; local filesystem readability is not authorization to read another group or employee context.",
-    "Company-material tasks must read company_sources.md, the company facts file, the Agent knowledge entry, and any necessary human knowledge-base current-version reference before answering from company files.",
+    "Feishu group and employee conversations are isolated by current chat_id/open_id routing; local filesystem readability is not authorization to read another group or employee context.",
+    "Company-material tasks must read company_sources.md, Company.md, the <AGENT_KB_NAME> agent knowledge entry, and any necessary Feishu knowledge base current-version reference before answering from company files.",
+    "Agent entry files stay slim; detailed reusable rules move to agent_rules or <AGENT_KB_NAME> by confirmation level.",
     "High-risk updates become review candidates before publication."
   ],
   "sources": [
     {
       "id": "root_rules",
-      "label": "Root agent rules",
+      "label": "Live root agent rules",
       "path": "AGENTS.md",
-      "owner": "<AI_ADMIN_ROLE>",
-      "read_when": "Every framework maintenance task and high-risk connector workflow.",
+      "owner": "AI admin",
+      "read_when": "Every <ORG_DIR> runtime task, Feishu workflow, worker execution, sub-agent route, and live agent system maintenance task.",
       "write_allowed_by_automation": false,
       "review_required": true,
       "do_not_store": ["real customer data", "employee private data", "tokens", "secrets", "raw chat records"]
@@ -27,92 +34,262 @@
     {
       "id": "common_error_preflight",
       "label": "Common error preflight",
-      "path": "COMMON_ERRORS.md + <RULES_DIR>/common_error_preflight.md",
-      "owner": "<AI_ADMIN_ROLE>",
-      "read_when": "Before risky tasks involving config/script writes, long command parameters, model capacity, context length, hidden private directories, Git publication, hooks, session repair, or pre-model connector failures.",
+      "path": "COMMON_ERRORS.md + <RULES_DIR>/common_error_preflight.md + <RULES_DIR>/common_error_registry.json",
+      "owner": "AI admin",
+      "read_when": "Before risky tasks involving config or script writes, Chinese or long command parameters, model capacity, Codex remote 403/compact failures, context length, hidden private directories, Git publication, <CONNECTOR_NAME>, hooks, session repair, pre-model connector failures, or any task that should avoid repeated known Codex walls.",
       "write_allowed_by_automation": "candidate_only",
       "review_required": true,
       "do_not_store": ["real paths beyond generic examples", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "raw chat"]
     },
     {
+      "id": "common_error_wall_registry",
+      "label": "Machine-readable common error wall avoidance registry",
+      "path": "<RULES_DIR>/common_error_registry.json",
+      "owner": "AI admin",
+      "read_when": "Before worker execution, hook delivery, connector recovery, Codex remote 403/compact recovery, risky file/message/send operations, and when repeated runtime failures should be turned into do_not_try/use_instead/verify guidance.",
+      "write_allowed_by_automation": "candidate_only",
+      "review_required": true,
+      "do_not_store": ["real paths beyond generic examples", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "raw chat"]
+    },
+    {
+      "id": "global_common_error_memanto",
+      "label": "Global Common Error <MEMORY_TOOL> memories",
+      "path": "<MEMORY_TOOL> agent naquan-global",
+      "owner": "AI admin",
+      "read_when": "When <MEMORY_TOOL> is available and a task touches known high-frequency failure modes, especially connector, hook, worker, automation, memory, delivery, Git publication, encoding, context, model runtime, or workspace search issues.",
+      "write_allowed_by_automation": "candidate_only",
+      "review_required": true,
+      "do_not_store": ["raw chat", "full logs", "real ids", "tokens", "secrets", "customer data", "employee private data", "session keys", "publishable business data"]
+    },
+    {
+      "id": "codex_local_project_memanto",
+      "label": "Local Codex project memory",
+      "path": "<MEMORY_TOOL> agent codex-local-projects + <RULES_DIR>/codex_local_project_memory.md + <ORG_DIR>/memanto",
+      "owner": "AI admin",
+      "read_when": "When the user asks what a project is for, where it left off, what to do next, or asks Codex to continue, organize, resume, review, or maintain a long-running project.",
+      "write_allowed_by_automation": "project_summary_only",
+      "review_required": false,
+      "do_not_store": ["raw chat", "full logs", "real ids", "tokens", "secrets", "customer data", "employee private data", "session keys", "prices", "contracts", "CRM data"]
+    },
+    {
       "id": "common_error_candidates",
       "label": "Common error update candidates",
       "path": "<MEMORY_REVIEW_DIR>/common_errors_update_pending.md",
-      "owner": "<AI_ADMIN_ROLE>",
+      "owner": "AI admin",
       "read_when": "During weekly memory compression, governance review, or after a new generic engineering/runtime failure is observed.",
       "write_allowed_by_automation": "candidate_only",
       "review_required": true,
       "do_not_store": ["real paths beyond generic examples", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "raw chat"]
     },
     {
-      "id": "company_sources",
-      "label": "Company source routing policy",
-      "path": "<RULES_DIR>/company_sources.md",
-      "owner": "<AI_ADMIN_ROLE> and <KNOWLEDGE_OWNER_ROLE>",
-      "read_when": "Before any task involving company files, product facts, sales or marketing material, SOPs, FAQs, templates, employee-readable official documents, controlled-material boundaries, or answers that should reference company files rather than model memory.",
+      "id": "governance_review_playbook",
+      "label": "Agent governance review playbook",
+      "path": "<RULES_DIR>/governance_review.md",
+      "owner": "AI admin",
+      "read_when": "When organizing, reviewing, consolidating, or improving agent rules, context, hooks, workers, automations, sub-agent routing, memory rules, delivery behavior, knowledge drafts, common errors, governance checks, GitHub templates, or after upgrading agent runtime/execution behavior.",
       "write_allowed_by_automation": false,
       "review_required": true,
-      "do_not_store": ["raw controlled material", "customer private data", "employee private data", "prices", "contracts", "tokens", "secrets"]
+      "do_not_store": ["raw chat", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "unredacted incident details"]
+    },
+    {
+      "id": "system_slimming",
+      "label": "Agent system slimming policy",
+      "path": "<RULES_DIR>/system_slimming.md",
+      "owner": "AI admin",
+      "read_when": "When slimming AGENTS.md, SUB_AGENT.md, agent_rules, Company.md, <AGENT_KB_NAME> knowledge pages, or deciding whether a temporary rule should become a formal rule.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw chat", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "unreviewed business facts"]
     },
     {
       "id": "company_facts",
       "label": "Company fact baseline",
       "path": "<COMPANY_FACTS_FILE>",
-      "owner": "<AI_ADMIN_ROLE> and confirmed business owners",
+      "owner": "AI admin and confirmed business owners",
       "read_when": "Company profile, product facts, business boundary, public-facing wording, or conflict resolution.",
       "write_allowed_by_automation": false,
       "review_required": true,
       "do_not_store": ["guesses", "unconfirmed product parameters", "prices", "contracts", "customer private data", "one-off chat conclusions"]
     },
     {
+      "id": "company_sources",
+      "label": "Company source routing policy",
+      "path": "<RULES_DIR>/company_sources.md",
+      "owner": "AI admin and knowledge owners",
+      "read_when": "Before any task involving company materials, company files, product facts, sales or marketing materials, SOPs, FAQs, templates, employee-readable official documents, controlled-material boundaries, or answers that should reference company files rather than model memory.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw controlled material", "customer private data", "employee private data", "prices", "contracts", "tokens", "secrets"]
+    },
+    {
+      "id": "crm_security",
+      "label": "CRM security and account mapping policy",
+      "path": "<RULES_DIR>/business_system_security.md",
+      "owner": "AI admin and CRM admin",
+      "read_when": "Before any CRM customer query, lead/customer intake, customer update, ownership assignment, duplicate check, export, CRM analysis, CRM worker task, CRM permission/debugging request, deciding whether a Feishu conversation is an allowed CRM entry point, deciding whether the sender should be validated by CRM backend open_id mapping, or deciding whether a recording/audio/minutes task may trigger CRM matching.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw CRM exports", "customer private data outside CRM", "tokens", "secrets", "database credentials", "raw logs", "unredacted account mappings in public files"]
+    },
+    {
       "id": "human_knowledge_base",
-      "label": "Human knowledge base",
-      "path": "<HUMAN_KB_NAME>",
-      "owner": "<AI_ADMIN_ROLE> and document owners",
-      "read_when": "Employees need readable SOP, FAQ, templates, official material, reusable documentation, training, policy, or current official wording.",
+      "label": "Feishu knowledge base",
+      "path": "Feishu knowledge base official documents",
+      "owner": "AI admin and document owners",
+      "read_when": "Employees need readable SOP, FAQ, templates, official material, reusable documentation, training, policy, or current official wording; also when <AGENT_KB_NAME>'s Feishu knowledge-base comparison says the current online version must be verified.",
       "write_allowed_by_automation": false,
       "review_required": true,
       "do_not_store": ["raw chat", "debug logs", "local paths", "unreviewed candidates", "controlled source content"]
     },
     {
       "id": "agent_knowledge_base",
-      "label": "Agent knowledge base",
-      "path": "<AGENT_KB_PATH>",
-      "owner": "<AI_ADMIN_ROLE>",
+      "label": "<AGENT_KB_NAME> agent knowledge vault",
+      "path": "<ORG_DIR>/知识库/<COMPANY_SHORT_NAME>",
+      "owner": "AI admin",
       "read_when": "Agent needs company-file retrieval maps, topic maps, task manuals, execution paths, permission checks, knowledge draft routing, or a company-material answer that should not rely only on model memory.",
       "write_allowed_by_automation": "candidate_or_index_only",
       "review_required": true,
       "do_not_store": ["customer private data", "employee private data", "prices", "contracts", "tokens", "raw transcripts"]
     },
     {
-      "id": "business_system_security",
-      "label": "Business-system security and account mapping policy",
-      "path": "<RULES_DIR>/business_system_security.md",
-      "owner": "<AI_ADMIN_ROLE> and <BUSINESS_SYSTEM_ADMIN_ROLE>",
-      "read_when": "Before any business-system query, intake, update, ownership assignment, export, permission debugging, allowed-conversation decision, account mapping decision, or audio/minutes business-system boundary decision.",
-      "write_allowed_by_automation": false,
+      "id": "graphify_diagnostics",
+      "label": "<GRAPH_DIAGNOSTICS_TOOL> relationship diagnostics",
+      "path": "graphify-out + <RULES_DIR>/graph_diagnostics.md + <ORG_DIR>/知识库/<COMPANY_SHORT_NAME>/99_<AGENT_NAME>工作台/<GRAPH_DIAGNOSTICS_TOOL>关系诊断候选.md",
+      "owner": "AI admin",
+      "read_when": "When using <GRAPH_DIAGNOSTICS_TOOL> outputs to inspect rule relationships, code/document links, isolated knowledge nodes, conflict candidates, template/live-rule confusion, or knowledge graph health.",
+      "write_allowed_by_automation": "candidate_only",
       "review_required": true,
-      "do_not_store": ["raw exports", "customer private data outside the backend", "tokens", "secrets", "database credentials", "raw logs"]
+      "do_not_store": ["raw chat", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "unverified <GRAPH_DIAGNOSTICS_TOOL> conclusions as facts"]
     },
     {
-      "id": "worker_runtime",
-      "label": "Worker runtime policy",
-      "path": "<RULES_DIR>/worker_runtime.md",
-      "owner": "<AI_ADMIN_ROLE>",
-      "read_when": "Before routing long-running tasks, batch jobs, file processing, reports, or scheduled automation through a worker.",
+      "id": "company_agent_rules",
+      "label": "Company agent rules",
+      "path": "<RULES_DIR>/index.md",
+      "owner": "AI admin",
+      "read_when": "Task matches an indexed rule scenario.",
+      "write_allowed_by_automation": "candidate_only_unless_admin_requested",
+      "review_required": true,
+      "do_not_store": ["daily task logs", "department-specific one-off conclusions", "raw chat"]
+    },
+    {
+      "id": "daily_review_core",
+      "label": "Daily review core",
+      "path": "<RULES_DIR>/daily_review_core.md",
+      "owner": "AI admin",
+      "read_when": "Daily review, department memory update, or knowledge draft routing.",
       "write_allowed_by_automation": false,
       "review_required": true,
-      "do_not_store": ["raw chat", "tokens", "secrets", "unredacted customer data", "session keys"]
+      "do_not_store": ["department-specific content templates", "raw chat", "unconfirmed facts"]
+    },
+    {
+      "id": "hook_guardrails",
+      "label": "Hook guardrail policy",
+      "path": "<RULES_DIR>/hook_guardrails.md",
+      "owner": "AI admin",
+      "read_when": "Changing hooks, CRM intake gates, outbound delivery, artifact delivery, memory writes, or automation writeback.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["secrets", "runtime session keys", "raw payloads"]
+    },
+    {
+      "id": "xiaogongdan_openapi",
+      "label": "Xiaogongdan OpenAPI safety policy",
+      "path": "<RULES_DIR>/xiaogongdan_openapi.md",
+      "owner": "AI admin",
+      "read_when": "When reading Xiaogongdan data, generating reports, preparing Feishu image/OCR import drafts, or performing any Xiaogongdan create, update, status, output, stock, process, or process routing operation.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["tokens", "secrets", "factory codes", "raw external-system payloads with private business data", "customer private data", "employee private data"]
+    },
+    {
+      "id": "xiaoquan_worker_runtime",
+      "label": "XiaoQuan background worker runtime policy",
+      "path": "<RULES_DIR>/worker_runtime.md",
+      "owner": "AI admin",
+      "read_when": "Creating, routing, executing, recovering, debugging, or migrating XiaoQuan background worker tasks, long-running automations, or codex exec jobs.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw chat", "secrets", "tokens", "runtime session keys", "local logs", "private customer data", "employee private data"]
+    },
+    {
+      "id": "context_budget",
+      "label": "Context budget policy",
+      "path": "<RULES_DIR>/context_budget.md",
+      "owner": "AI admin",
+      "read_when": "Updating group_context.md, long_term_context.md, SUB_AGENT.md, tasks/TODO.md, or weekly compression rules.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw chat", "one-off task details"]
+    },
+    {
+      "id": "group_entry",
+      "label": "Group agent entry",
+      "path": "<ORG_DIR>/员工/群聊/<GROUP_NAME>/SUB_AGENT.md",
+      "owner": "AI admin and group owner",
+      "read_when": "Handling a message routed to that group.",
+      "write_allowed_by_automation": "candidate_only",
+      "review_required": true,
+      "do_not_store": ["daily review details", "long lists", "raw chat", "private customer data"]
     },
     {
       "id": "group_profile",
       "label": "Group machine-readable profile",
-      "path": "<GROUP_WORKSPACE>/agent_profile.json",
-      "owner": "<AI_ADMIN_ROLE>",
+      "path": "<ORG_DIR>/员工/群聊/<GROUP_NAME>/agent_profile.json",
+      "owner": "AI admin",
       "read_when": "Automation or hook needs to know allowed sends, writes, redaction, or cross-group behavior.",
       "write_allowed_by_automation": false,
       "review_required": true,
-      "do_not_store": ["platform ids unless necessary", "secrets"]
+      "do_not_store": ["open_id", "chat_id beyond declared group id if not necessary", "secrets"]
+    },
+    {
+      "id": "group_context",
+      "label": "Group long-term context",
+      "path": "<ORG_DIR>/员工/群聊/<GROUP_NAME>/group_context.md",
+      "owner": "Group agent under AI admin rules",
+      "read_when": "Handling a message routed to that group or running approved group review.",
+      "write_allowed_by_automation": "profile_controlled",
+      "review_required": false,
+      "do_not_store": ["raw chat", "private customer details", "prices", "contracts", "local paths", "debug logs"]
+    },
+    {
+      "id": "group_external_memory",
+      "label": "Group external memory pilot rules",
+      "path": "<ORG_DIR>/员工/群聊/<GROUP_NAME>/agent_rules/memanto_memory.md",
+      "owner": "AI admin",
+      "read_when": "When a group enables an external memory layer such as <MEMORY_TOOL>, when recalling group-specific long-term preferences from an external memory tool, or when deciding whether a memory may be written outside local files.",
+      "write_allowed_by_automation": "candidate_only",
+      "review_required": true,
+      "do_not_store": ["raw chat", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "local paths", "unreviewed business facts"]
+    },
+    {
+      "id": "employee_context",
+      "label": "Employee long-term context",
+      "path": "<ORG_DIR>/员工/架构/<DEPARTMENT>/<EMPLOYEE>/long_term_context.md",
+      "owner": "Employee context automation under AI admin rules",
+      "read_when": "Handling an identified employee private chat.",
+      "write_allowed_by_automation": "profile_controlled",
+      "review_required": false,
+      "do_not_store": ["group raw chat", "other employee private data", "unrelated personal details"]
+    },
+    {
+      "id": "knowledge_status",
+      "label": "Knowledge intake status table",
+      "path": "<MEMORY_REVIEW_DIR>/knowledge_intake_status.csv",
+      "owner": "AI admin",
+      "read_when": "Creating, reviewing, publishing, indexing, rejecting, or archiving knowledge candidates.",
+      "write_allowed_by_automation": "candidate_status_only",
+      "review_required": true,
+      "do_not_store": ["raw source text", "private identifiers", "controlled source details"]
+    },
+    {
+      "id": "codex_automations",
+      "label": "Codex automations",
+      "path": "Codex automation registry",
+      "owner": "AI admin",
+      "read_when": "Creating or updating scheduled reviews, monitors, delivery jobs, or validation jobs.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["secrets", "unreviewed send targets", "ambiguous write permissions"]
     }
   ]
 }

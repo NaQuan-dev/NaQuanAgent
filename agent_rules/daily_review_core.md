@@ -1,38 +1,66 @@
-# Daily Review Core
+﻿# 公司级每日复盘核心规则
 
-This is the reusable core rule for cross-department daily reviews. A department or group enables, disables, or scopes the behavior through `agent_profile.json`. Existing department-specific review workflows must not be copied to other departments by default.
+<!-- TEMPLATE ONLY - sanitized publishing mirror: generated from a private system file. Review placeholders before use. -->
 
-## Enable Conditions
 
-- The current group or department profile has `daily_review.enabled = true`.
-- The automation has a clear time window, read scope, and writeback permission.
-- The read scope is limited to the current authorized group, department, or employee context.
-- Cross-group reading is disabled unless explicitly allowed by policy and task necessity.
+本规则用于把“每日复盘与沉淀”从单个部门经验拆成公司通用能力。它只定义复盘流程、写回边界和审核出口；各部门的具体内容模板、业务字段、发送方式和专属规则仍由对应群聊 `group_context.md`、`SUB_AGENT.md` 或部门 `agent_rules` 决定。
 
-## Review Dimensions
+## 适用场景
 
-- Work completed in the previous period.
-- Follow-ups and unresolved tasks.
-- Agent answer quality and improvement points.
-- Stable collaboration preferences.
-- Process, SOP, or knowledge-base candidates.
-- Risks, permission gaps, and items needing confirmation.
+- 管理员要求对某个群聊或部门启用每日轻量复盘。
+- 自动化每天检查已启用复盘的群聊，并处理前一自然日的新增本地记录。
+- 每周上下文压缩任务需要把日常复盘结果整理成长期上下文或知识库候选草稿。
 
-## Write Boundaries
+## 读取边界
 
-- Stable, low-risk conclusions that belong only to the current group may be written to `group_context.md` if the profile allows it.
-- Open tasks, owner-confirmation items, skill suggestions, and process gaps may be written to `tasks/TODO.md`.
-- Company-level facts, official knowledge-base text, rule files, and cross-department SOPs should become review candidates by default.
-- Customer privacy, quotes, contracts, controlled materials, raw chats, and transcripts must not be written to long-term context.
+- 只读取当前启用复盘的群聊工作区，不跨群读取、搜索、引用或迁移其他群聊资料。
+- 默认读取当前群的 `SUB_AGENT.md`、`group_context.md`、`chat_history.md`、`tasks/TODO.md`，再按任务必要性读取 `outputs`、`archive` 或部门专属规则。
+- 只处理本地已有记录和必要摘要，不批量下载、备份或全文复制<MESSAGE_PLATFORM>原始聊天。
+- 客户、报价、合同、CRM、联系人、员工隐私、图纸、密钥、token、会话 ID 和受控资料不得进入普通复盘正文或普通知识库。
 
-## Knowledge Destinations
+## 通用复盘维度
 
-- Human-readable knowledge bases are for official SOPs, FAQs, templates, and documentation.
-- Agent knowledge bases are for task manuals, retrieval maps, execution paths, and draft candidates.
-- Automations prepare drafts by default; they do not directly publish official material.
+每日复盘至少判断以下 6 类内容：
 
-## Send Policy
+1. 完成事项：前一日实际完成的任务、输出、同步、交付和已确认结果。
+2. 待跟进事项：未完成、待用户确认、待负责人确认、待补资料或待重试事项。
+3. 回答质量：<AGENT_NAME>回复是否出现事实不稳、交付未闭环、格式不合适、语言风格不匹配或重复返工。
+4. 协作偏好：群聊成员反复体现的输出格式、确认方式、沟通节奏和风险偏好。
+5. 流程候选：可复用的 SOP、检查清单、任务手册、技能建议或跨部门协作规则。
+6. 风险边界：不能自动升级为事实、不能外发、不能跨群同步、需要人工确认的内容。
 
-- Group summary sending is controlled by `agent_profile.json` at `daily_review.send_to_group`.
-- Pilots should normally start without sending group summaries; collect internal memory and weekly review candidates first.
-- Existing department-specific reviews keep their own send time, content style, and write boundaries.
+## 写回规则
+
+- 部门稳定协作习惯、长期输出偏好、部门内可复用流程：写入当前群 `group_context.md`，并先去重、合并同类项。
+- 当前群待办、待确认事项、技能建设建议：写入当前群 `tasks/TODO.md`。
+- 员工个人长期偏好、个人工作习惯和个人长期任务背景：只写入该员工个人 `long_term_context.md`，不得混入群聊长期上下文。
+- 公司级事实、统一业务口径、产品参数、客户画像、正式 SOP、FAQ 或模板：只整理成每周候选草稿，等待管理员或负责人确认。
+- `Company.md`、公司<HUMAN_KB_NAME>正式正文和群聊 `SUB_AGENT.md` 默认不由每日复盘直接修改。
+
+## 知识库出口
+
+- <HUMAN_KB_NAME>主要给人看：只放员工需要长期复用、适合阅读和协作的正式 SOP、FAQ、模板、资料目录和已确认正文。
+- <AGENT_KB_NAME> 主要给 Agent 看：优先放<AGENT_NAME>检索地图、任务手册、执行路径、候选沉淀、权限判断和知识库对照。
+- 同一条沉淀如果既要给人看又要给 Agent 用，应先整理成人可读的<HUMAN_KB_NAME>草稿，再在 <AGENT_KB_NAME> 中建立对照、索引或执行提示。
+- 原始聊天、录音逐字稿、客户隐私、员工隐私、报价、合同、路径、调试日志和未确认事实不进入普通<HUMAN_KB_NAME>或 <AGENT_KB_NAME> 普通知识正文。
+
+## 部门 profile
+
+- <CONTENT_TEAM>保留现有专属复盘 profile，包括文案库、选题库、废案原因复盘、内容工作流和群内简报发送要求；不得把这些内容当作公司默认模板复制到其他部门。
+- <SALES_GROUP>作为通用复盘试点：启用每日轻量复盘，但试点初期不向销售群发送每日摘要，只做内部沉淀和每周汇总。
+- 财务、人事、生产、管理等涉及敏感数据或强流程的部门，应先使用通用复盘维度，再按部门风险单独补充 profile。
+
+## 输出要求
+
+自动化运行结果分为两类：
+
+- 内部运行结果：记录本次复盘范围、是否有新增内容、写回了哪些长期上下文、哪些事项进入待确认、哪些内容被拒绝沉淀以及原因。
+- 用户/群聊消息：只有对应部门 profile 明确允许发送时才发送；未启用发送的群聊不得主动发每日摘要。
+
+## 验证要求
+
+- 写回前后检查 `group_context.md` 和 `long_term_context.md` 是否出现重复、流水账或一次性任务细节。
+- 每次复盘后检查新增内容中是否包含本地路径、客户隐私、报价、合同、图纸、密钥、token、群聊 ID 或员工隐私。
+- 没有足够新增内容时输出“无稳定新沉淀”，不要为了更新而制造规则。
+
+<!-- template-check: send_to_group -->

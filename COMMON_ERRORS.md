@@ -1,4 +1,4 @@
-# COMMON_ERRORS
+﻿# COMMON_ERRORS
 
 This file is the reusable framework's generic common-error playbook. It records general engineering and safety lessons only. Do not store real organization names, people, customers, sessions, secrets, local private paths, or business-system details here.
 
