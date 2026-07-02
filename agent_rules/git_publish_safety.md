@@ -5,6 +5,8 @@
 - Commit only framework docs, templates, script skeletons, and redacted examples.
 - Default to rejecting local runtime data.
 - Treat even private repositories as if they may be shared later.
+- In a private runtime workspace, the local `templates/` directory is the publish source. Publish its contents to the GitHub repository root instead of publishing the live workspace root or a nested `templates/` layer.
+- Use `scripts/Publish-TemplateMirror.ps1` or an equivalent temporary-worktree workflow so the staged tree can be reviewed and scanned before push.
 
 ## Do Not Commit
 
