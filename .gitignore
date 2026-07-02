@@ -1,35 +1,39 @@
 # Default deny: every path is ignored unless explicitly allowed below.
 *
 
-# Repository metadata and framework docs.
+# Template repository metadata and root files.
 !.gitignore
 !.ignore
 !README.md
 !AGENTS.md
+!SUBAGENTS.md
 !COMMON_ERRORS.md
 
-# Reusable framework documentation.
+# Reusable framework documentation and templates.
 !docs/
 !docs/**
+!agent_rules/
+!agent_rules/**
+!config/
+!config/**
+!data/
+!data/**
+!memory_review/
+!memory_review/**
+!scripts/
+!scripts/**
+!subagent/
+!subagent/**
+!subagents/
+!subagents/**
 
-# Safe templates and skeletons.
-!templates/
-!templates/**
-
-# Top-level local script directory is intentionally not versioned.
-# Only this note is tracked; reusable script skeletons live in templates/scripts.
-!/scripts/
-/scripts/**
-!/scripts/README.md
-
-# Local runtime, connector state, logs, generated files, and private data.
+# Runtime, connector state, logs, generated files, and private data.
 /.env
 /.env.*
 /.cc-connect*/
 /.runtime/
 /runtime/
 /agents/
-/data/
 /org_data/
 /workspace_data/
 /private/
@@ -40,7 +44,7 @@
 /tmp/
 /downloads/
 /minutes/
-/plan/
+/outputs/
 /tools/
 *.log
 *.err.log

@@ -134,7 +134,7 @@ Read-JsonFile -Path $registry -Area "rule registry" | Out-Null
 Read-JsonFile -Path $profile -Area "agent profile" | Out-Null
 
 Assert-FileContains -Path $rootRules -Needle "COMMON_ERRORS.md" -Area "common error preflight" -Message "Root rules reference COMMON_ERRORS.md"
-Assert-FileContains -Path $rootRules -Needle "sanitized scaffolds" -Area "template boundary" -Message "Root rules prevent template files from being treated as runtime context"
+Assert-FileContains -Path $rootRules -Needle "sanitized publishing mirror" -Area "template boundary" -Message "Root rules prevent template files from being treated as runtime context"
 Assert-FileContains -Path $rootRules -Needle "company_sources.md" -Area "company knowledge sources" -Message "Root rules route company-material tasks to company_sources.md"
 Assert-FileContains -Path $rootRules -Needle "agent_knowledge.md" -Area "company knowledge sources" -Message "Root rules route company-material tasks to agent_knowledge.md"
 Assert-FileContains -Path $ignoreFile -Needle "templates/" -Area "template boundary" -Message ".ignore hides templates from default local search" -LevelOnMissing "WARNING"

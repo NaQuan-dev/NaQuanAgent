@@ -1,3 +1,18 @@
-# Hide GitHub template skeletons from default ripgrep searches.
-# Runtime lookups must use the local private workspace with explicit paths.
+# Hide common private/runtime directories from default local searches.
+# In a private workspace, keep this file aligned with .gitignore.
+.cc-connect/
+.runtime/
+agents/
+org_data/
+workspace_data/
+private/
+secrets/
+log/
+logs/
+temp/
+tmp/
+downloads/
+minutes/
+outputs/
+tools/
 templates/
