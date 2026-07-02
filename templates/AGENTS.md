@@ -32,7 +32,7 @@ Apply rules in this order:
 3. Organization fact baseline: `<COMPANY_FACTS_FILE>`.
 4. Organization-level rule index and registry: `<RULES_DIR>/index.md`, `<RULES_DIR>/rule_registry.md`, and `<RULES_DIR>/rule_registry.json`.
 5. Current personal or group sub-agent files: `SUB_AGENT.md`, `agent_profile.json`, `group_context.md`, `long_term_context.md`, and current task context.
-6. Human knowledge base, Agent knowledge base, graph diagnostics, memory tools, archives, and other auxiliary sources.
+6. Human knowledge base official text, Agent knowledge base, graph diagnostics, memory tools, archives, and other auxiliary sources.
 
 If rules conflict, follow the stricter safety, permission, and delivery boundary. If still unclear, ask the Agent administrator.
 
@@ -45,15 +45,15 @@ Do not load every rule at startup. Read the rule index first, then load only tas
 | Rule source of truth, read timing, write permission, review requirements | `<RULES_DIR>/rule_registry.md` / `<RULES_DIR>/rule_registry.json` |
 | Employee identity, registration, permissions, task routing | `<RULES_DIR>/identity_access.md` |
 | Group context, group members, cross-group data | `<RULES_DIR>/identity_access.md` + `<RULES_DIR>/memory_context.md` |
-| Business-system or CRM query, intake, update, ownership, admin visibility | `<RULES_DIR>/business_system_security.md` or the equivalent local system rule |
+| Business-system or CRM query, intake, update, ownership, admin visibility, allowed conversation locations | `<RULES_DIR>/business_system_security.md` |
 | Generated files, messages, links, images, attachments, scheduled sends | `<RULES_DIR>/external_actions.md` + `<RULES_DIR>/workspace_io.md` |
 | Connector hooks, pre-model errors, outbound guards, artifact delivery | `<RULES_DIR>/hook_guardrails.md` |
-| Worker, long tasks, background execution | `<RULES_DIR>/worker_runtime.md` or the equivalent local worker rule |
+| Worker, long tasks, background execution | `<RULES_DIR>/worker_runtime.md` |
 | Known errors, repeated failure modes, encoding, arguments, search, Git | `<RULES_DIR>/common_error_preflight.md` + `COMMON_ERRORS.md` |
-| Company facts, product facts, controlled materials | `<RULES_DIR>/company_sources.md` + `<COMPANY_FACTS_FILE>` |
+| Company files, product facts, SOP/FAQ/templates, employee-readable official material, controlled-material boundaries | `<RULES_DIR>/company_sources.md` + `<RULES_DIR>/agent_knowledge.md` + `<COMPANY_FACTS_FILE>` |
 | Memory compression, personal/group context, external memory tools | `<RULES_DIR>/memory_context.md` |
-| Agent knowledge base and durable project maps | `<RULES_DIR>/agent_knowledge.md` or the equivalent local knowledge rule |
-| Graph diagnostics and candidate findings | `<RULES_DIR>/graph_diagnostics.md` or the equivalent local graph rule |
+| Agent knowledge base, durable project maps, knowledge candidates, human-KB current-version map | `<RULES_DIR>/agent_knowledge.md` |
+| Graph diagnostics and candidate findings | `<RULES_DIR>/graph_diagnostics.md` |
 | Agent governance, system file sync, rule slimming | `<RULES_DIR>/governance_review.md` + `<RULES_DIR>/system_slimming.md` |
 | Git commit, push, public template safety | `<RULES_DIR>/git_publish_safety.md` |
 
@@ -82,6 +82,9 @@ Do not load every rule at startup. Read the rule index first, then load only tas
 ## Company Facts And Controlled Data
 
 - Use `<COMPANY_FACTS_FILE>` and confirmed official knowledge sources as the baseline for company facts.
+- Any task involving company files, product facts, sales or marketing material, SOPs, FAQs, templates, employee-readable official material, or controlled-material boundaries must not rely only on model memory. Read `<RULES_DIR>/company_sources.md`, then follow that rule to read `<COMPANY_FACTS_FILE>`, the Agent knowledge base entry, and any necessary human knowledge-base current-version reference.
+- The Agent knowledge base is the default entry for company-file retrieval maps, topic maps, task manuals, execution paths, and knowledge candidates. For company-file retrieval, read `<RULES_DIR>/agent_knowledge.md`, then inspect the vault welcome page, Agent dashboard or retrieval guide, and relevant topic maps.
+- The human knowledge base is the official people-facing knowledge base. For SOPs, FAQs, templates, training, policy, or publishable material, verify against the current official human-KB text or the Agent knowledge base page that maps current human-KB versions.
 - Do not invent technical parameters, customer cases, capacity, lead time, certifications, sales volume, ROI, prices, warranty, refund terms, service commitments, or competitor comparisons.
 - Controlled materials include drawings, quote floors, finance, HR, customer privacy, supplier-sensitive information, contracts, and business-system data.
 - Controlled materials must not be copied automatically into other chats, ordinary knowledge pages, public templates, or external memory tools.
@@ -127,6 +130,8 @@ Do not load every rule at startup. Read the rule index first, then load only tas
 
 - Human-facing knowledge bases hold official SOPs, FAQs, templates, and employee-readable material.
 - Agent-facing knowledge bases hold task manuals, retrieval maps, execution paths, permission rules, and reviewed knowledge candidates.
+- Company-material tasks use this default read chain: `<RULES_DIR>/company_sources.md` -> `<COMPANY_FACTS_FILE>` -> `<RULES_DIR>/agent_knowledge.md` -> Agent knowledge topic maps/task manuals -> human knowledge-base current official text when needed.
+- Content that employees should reuse long term should become a human-KB draft or official document. Content that the Agent should execute or retrieve long term should become an Agent knowledge-base task manual, retrieval map, or candidate page.
 - Graph diagnostics are candidate-discovery tools, not authoritative knowledge sources.
 - External memory tools accelerate recall but do not replace official rules, project files, Agent knowledge, or human knowledge bases.
 - Do not store raw chats, full logs, customer or employee privacy, quotes, contracts, business-system details, tokens, secrets, platform IDs, or session keys in ordinary long-term memory or public templates.

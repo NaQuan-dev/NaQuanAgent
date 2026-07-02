@@ -9,6 +9,8 @@
     "Company facts file is the company fact baseline.",
     "Known common errors are preflight inputs before risky actions.",
     "Group and employee context files are local working memory, not official company fact sources.",
+    "Group and employee conversations are isolated by current route and identity; local filesystem readability is not authorization to read another group or employee context.",
+    "Company-material tasks must read company_sources.md, the company facts file, the Agent knowledge entry, and any necessary human knowledge-base current-version reference before answering from company files.",
     "High-risk updates become review candidates before publication."
   ],
   "sources": [
@@ -41,6 +43,66 @@
       "write_allowed_by_automation": "candidate_only",
       "review_required": true,
       "do_not_store": ["real paths beyond generic examples", "real ids", "tokens", "secrets", "customer data", "employee private data", "raw logs", "raw chat"]
+    },
+    {
+      "id": "company_sources",
+      "label": "Company source routing policy",
+      "path": "<RULES_DIR>/company_sources.md",
+      "owner": "<AI_ADMIN_ROLE> and <KNOWLEDGE_OWNER_ROLE>",
+      "read_when": "Before any task involving company files, product facts, sales or marketing material, SOPs, FAQs, templates, employee-readable official documents, controlled-material boundaries, or answers that should reference company files rather than model memory.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw controlled material", "customer private data", "employee private data", "prices", "contracts", "tokens", "secrets"]
+    },
+    {
+      "id": "company_facts",
+      "label": "Company fact baseline",
+      "path": "<COMPANY_FACTS_FILE>",
+      "owner": "<AI_ADMIN_ROLE> and confirmed business owners",
+      "read_when": "Company profile, product facts, business boundary, public-facing wording, or conflict resolution.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["guesses", "unconfirmed product parameters", "prices", "contracts", "customer private data", "one-off chat conclusions"]
+    },
+    {
+      "id": "human_knowledge_base",
+      "label": "Human knowledge base",
+      "path": "<HUMAN_KB_NAME>",
+      "owner": "<AI_ADMIN_ROLE> and document owners",
+      "read_when": "Employees need readable SOP, FAQ, templates, official material, reusable documentation, training, policy, or current official wording.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw chat", "debug logs", "local paths", "unreviewed candidates", "controlled source content"]
+    },
+    {
+      "id": "agent_knowledge_base",
+      "label": "Agent knowledge base",
+      "path": "<AGENT_KB_PATH>",
+      "owner": "<AI_ADMIN_ROLE>",
+      "read_when": "Agent needs company-file retrieval maps, topic maps, task manuals, execution paths, permission checks, knowledge draft routing, or a company-material answer that should not rely only on model memory.",
+      "write_allowed_by_automation": "candidate_or_index_only",
+      "review_required": true,
+      "do_not_store": ["customer private data", "employee private data", "prices", "contracts", "tokens", "raw transcripts"]
+    },
+    {
+      "id": "business_system_security",
+      "label": "Business-system security and account mapping policy",
+      "path": "<RULES_DIR>/business_system_security.md",
+      "owner": "<AI_ADMIN_ROLE> and <BUSINESS_SYSTEM_ADMIN_ROLE>",
+      "read_when": "Before any business-system query, intake, update, ownership assignment, export, permission debugging, allowed-conversation decision, account mapping decision, or audio/minutes business-system boundary decision.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw exports", "customer private data outside the backend", "tokens", "secrets", "database credentials", "raw logs"]
+    },
+    {
+      "id": "worker_runtime",
+      "label": "Worker runtime policy",
+      "path": "<RULES_DIR>/worker_runtime.md",
+      "owner": "<AI_ADMIN_ROLE>",
+      "read_when": "Before routing long-running tasks, batch jobs, file processing, reports, or scheduled automation through a worker.",
+      "write_allowed_by_automation": false,
+      "review_required": true,
+      "do_not_store": ["raw chat", "tokens", "secrets", "unredacted customer data", "session keys"]
     },
     {
       "id": "group_profile",

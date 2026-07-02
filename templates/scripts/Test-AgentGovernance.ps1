@@ -64,7 +64,7 @@ function Assert-FileContains {
   )
 
   if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
-    Add-Check -Level "ERROR" -Area $Area -Message "File is missing" -Path $Path
+    Add-Check -Level $LevelOnMissing -Area $Area -Message "File is missing" -Path $Path
     return
   }
 
@@ -82,31 +82,74 @@ if (-not (Test-Path -LiteralPath $WorkspaceRoot -PathType Container)) {
   Add-Check -Level "OK" -Area "workspace" -Message "Workspace root is accessible" -Path $WorkspaceRoot
 }
 
-$rootRules = Join-WorkspacePath "AGENTS.md"
+$templateWorkspace = $WorkspaceRoot
+if (-not (Test-Path -LiteralPath (Join-Path $templateWorkspace "agent_rules") -PathType Container)) {
+  $nestedTemplateWorkspace = Join-Path $WorkspaceRoot "templates"
+  if (Test-Path -LiteralPath (Join-Path $nestedTemplateWorkspace "agent_rules") -PathType Container) {
+    $templateWorkspace = $nestedTemplateWorkspace
+  }
+}
+$templateWorkspace = (Resolve-Path -LiteralPath $templateWorkspace).Path
+
+function Join-TemplatePath {
+  param([string]$RelativePath)
+  return Join-Path $templateWorkspace $RelativePath
+}
+
+$rootRules = Join-TemplatePath "AGENTS.md"
 $ignoreFile = Join-WorkspacePath ".ignore"
+if (-not (Test-Path -LiteralPath $ignoreFile -PathType Leaf)) {
+  $parentIgnoreFile = Join-Path (Split-Path -Parent $templateWorkspace) ".ignore"
+  if (Test-Path -LiteralPath $parentIgnoreFile -PathType Leaf) {
+    $ignoreFile = $parentIgnoreFile
+  }
+}
 $commonErrors = Join-WorkspacePath "COMMON_ERRORS.md"
-$templateRootRules = Join-WorkspacePath "templates\AGENTS.md"
-$templateSubAgentRules = Join-WorkspacePath "templates\subagent\SUB_AGENT.md"
-$rulesIndex = Join-WorkspacePath "agent_rules\index.md"
-$registry = Join-WorkspacePath "agent_rules\rule_registry.example.json"
-$preflight = Join-WorkspacePath "agent_rules\common_error_preflight.md"
-$hookGuardrails = Join-WorkspacePath "agent_rules\hook_guardrails.md"
-$contextBudget = Join-WorkspacePath "agent_rules\context_budget.md"
-$dailyReview = Join-WorkspacePath "agent_rules\daily_review_core.md"
-$profile = Join-WorkspacePath "subagent\agent_profile.example.json"
-$commonErrorCandidates = Join-WorkspacePath "memory_review\common_errors_update_pending.md"
-$knowledgeStatus = Join-WorkspacePath "memory_review\knowledge_intake_status.example.csv"
+if (-not (Test-Path -LiteralPath $commonErrors -PathType Leaf)) {
+  $parentCommonErrors = Join-Path (Split-Path -Parent $templateWorkspace) "COMMON_ERRORS.md"
+  if (Test-Path -LiteralPath $parentCommonErrors -PathType Leaf) {
+    $commonErrors = $parentCommonErrors
+  }
+}
+$templateRootRules = $rootRules
+$templateSubAgentRules = Join-TemplatePath "subagent\SUB_AGENT.md"
+$rulesIndex = Join-TemplatePath "agent_rules\index.md"
+$registry = Join-TemplatePath "agent_rules\rule_registry.example.json"
+$preflight = Join-TemplatePath "agent_rules\common_error_preflight.md"
+$hookGuardrails = Join-TemplatePath "agent_rules\hook_guardrails.md"
+$companySources = Join-TemplatePath "agent_rules\company_sources.md"
+$agentKnowledge = Join-TemplatePath "agent_rules\agent_knowledge.md"
+$businessSystemSecurity = Join-TemplatePath "agent_rules\business_system_security.md"
+$workerRuntime = Join-TemplatePath "agent_rules\worker_runtime.md"
+$graphDiagnostics = Join-TemplatePath "agent_rules\graph_diagnostics.md"
+$governanceReview = Join-TemplatePath "agent_rules\governance_review.md"
+$systemSlimming = Join-TemplatePath "agent_rules\system_slimming.md"
+$contextBudget = Join-TemplatePath "agent_rules\context_budget.md"
+$dailyReview = Join-TemplatePath "agent_rules\daily_review_core.md"
+$profile = Join-TemplatePath "subagent\agent_profile.example.json"
+$commonErrorCandidates = Join-TemplatePath "memory_review\common_errors_update_pending.md"
+$knowledgeStatus = Join-TemplatePath "memory_review\knowledge_intake_status.example.csv"
 
 Read-JsonFile -Path $registry -Area "rule registry" | Out-Null
 Read-JsonFile -Path $profile -Area "agent profile" | Out-Null
 
 Assert-FileContains -Path $rootRules -Needle "COMMON_ERRORS.md" -Area "common error preflight" -Message "Root rules reference COMMON_ERRORS.md"
-Assert-FileContains -Path $rootRules -Needle "template hit only" -Area "template boundary" -Message "Root rules prevent template hits from being treated as runtime context"
+Assert-FileContains -Path $rootRules -Needle "sanitized scaffolds" -Area "template boundary" -Message "Root rules prevent template files from being treated as runtime context"
+Assert-FileContains -Path $rootRules -Needle "company_sources.md" -Area "company knowledge sources" -Message "Root rules route company-material tasks to company_sources.md"
+Assert-FileContains -Path $rootRules -Needle "agent_knowledge.md" -Area "company knowledge sources" -Message "Root rules route company-material tasks to agent_knowledge.md"
 Assert-FileContains -Path $ignoreFile -Needle "templates/" -Area "template boundary" -Message ".ignore hides templates from default local search" -LevelOnMissing "WARNING"
 Assert-FileContains -Path $templateRootRules -Needle "TEMPLATE ONLY" -Area "template boundary" -Message "Template AGENTS.md has a template-only banner" -LevelOnMissing "WARNING"
 Assert-FileContains -Path $templateSubAgentRules -Needle "TEMPLATE ONLY" -Area "template boundary" -Message "Template SUB_AGENT.md has a template-only banner" -LevelOnMissing "WARNING"
 Assert-FileContains -Path $preflight -Needle "common_errors_update_pending.md" -Area "common error preflight" -Message "Preflight rule references update candidates"
 Assert-FileContains -Path $hookGuardrails -Needle "pre-model" -Area "hook guardrails" -Message "Hook guardrails cover pre-model connector failures"
+Assert-FileContains -Path $companySources -Needle "agent_knowledge.md" -Area "company knowledge sources" -Message "Company sources route to Agent knowledge"
+Assert-FileContains -Path $companySources -Needle "human knowledge base" -Area "company knowledge sources" -Message "Company sources reference human KB verification"
+Assert-FileContains -Path $agentKnowledge -Needle "human-KB current-version map" -Area "company knowledge sources" -Message "Agent knowledge rule references human-KB current-version map"
+Assert-FileContains -Path $businessSystemSecurity -Needle "Audio, video, transcripts" -Area "business-system security" -Message "Business-system rule blocks audio-only intent"
+Assert-FileContains -Path $workerRuntime -Needle "Do not send" -Area "worker runtime" -Message "Worker rule blocks placeholder replies"
+Assert-FileContains -Path $graphDiagnostics -Needle "not an authoritative knowledge source" -Area "graph diagnostics" -Message "Graph diagnostics are not authoritative"
+Assert-FileContains -Path $governanceReview -Needle "sanitized template" -Area "governance review" -Message "Governance review separates live and template updates"
+Assert-FileContains -Path $systemSlimming -Needle "startup files short" -Area "system slimming" -Message "System slimming rule exists"
 Assert-FileContains -Path $contextBudget -Needle "SUB_AGENT.md" -Area "context budget" -Message "Context budget covers SUB_AGENT.md"
 Assert-FileContains -Path $dailyReview -Needle "send_to_group" -Area "daily review" -Message "Daily review send policy is profile-controlled"
 Assert-FileContains -Path $commonErrors -Needle "pre-model" -Area "common errors" -Message "Common errors include pre-model failure guidance" -LevelOnMissing "WARNING"
